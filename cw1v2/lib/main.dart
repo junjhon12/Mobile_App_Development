@@ -5,6 +5,8 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -14,6 +16,8 @@ class MyApp extends StatelessWidget {
 }
 
 class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
@@ -51,7 +55,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Counter & Image Toggle'),
+        title: const Text('Counter & Image Toggle'),
       ),
       body: Center(
         child: Column(
@@ -63,14 +67,14 @@ class _HomeScreenState extends State<HomeScreen> {
               width: 200,
               height: 200,
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
 
             // Display the counter value
             Text(
               'Counter Value: $_counter',
-              style: TextStyle(fontSize: 24),
+              style: const TextStyle(fontSize: 24),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             // Buttons in a row, aligned evenly
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -78,17 +82,17 @@ class _HomeScreenState extends State<HomeScreen> {
                 // Increment button
                 ElevatedButton(
                   onPressed: _incrementCounter,
-                  child: Text('Increment'),
+                  child: const Text('Increment'),
                 ),
                 // Toggle image button
                 ElevatedButton(
                   onPressed: _toggleImage,
-                  child: Text('Toggle Image'),
+                  child: const Text('Toggle Image'),
                 ),
                 // Reset button
                 ElevatedButton(
                   onPressed: _reset,
-                  child: Text('Reset'),
+                  child: const Text('Reset'),
                 ),
               ],
             ),
