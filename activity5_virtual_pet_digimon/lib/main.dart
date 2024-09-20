@@ -31,18 +31,18 @@ class DigiHomePage extends StatefulWidget {
 }
 
 class _DigiHomePageState extends State<DigiHomePage> {
-  // Digimon's stats
-  int mood = 50; // Mood level
-  int hunger = 50; // Hunger level
-  int energy = 50; // Energy level
-  int life = 100; // Current life
-  int maxLife = 100; // Maximum life
+  // Digimon's default stats
+  int mood = 50; 
+  int hunger = 50; 
+  int energy = 50; 
+  int life = 100; 
+  int maxLife = 100; 
 
-  // Digimon's RPG stats
-  int str = 10; // Strength
-  int intelligence = 10; // Intelligence
-  int dex = 10; // Dexterity
-  int luck = 10; // Luck
+  // Digimon's RPG starting stats
+  int str = 10; 
+  int intelligence = 10; 
+  int dex = 10; 
+  int luck = 10; 
 
   // Random number generator for stat changes
   final Random random = Random();
