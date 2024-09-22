@@ -1,19 +1,36 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(const MainApp());
+  runApp(const MyApp());
 }
 
-class MainApp extends StatelessWidget {
-  const MainApp({super.key});
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
+      // Hides the top-right debug banner
+      debugShowCheckedModeBanner: false,
       home: Scaffold(
-        body: Center(
-          child: Text('Hello World!'),
+
+        appBar: AppBar(
+          title: Text('Login App'),
         ),
+
+        body: Center(
+          child: Container(
+            height: MediaQuery.of(context).size.height * 0.5,  // 50% height
+            width: MediaQuery.of(context).size.width * 0.5,    // 50% width
+            decoration: BoxDecoration(
+              color: Colors.blue,  // Add some color or styling
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+        ),
+
+
+
       ),
     );
   }
