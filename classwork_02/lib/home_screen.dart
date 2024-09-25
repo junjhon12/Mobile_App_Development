@@ -8,8 +8,7 @@ class HomeScreen extends StatefulWidget {
   final List<Map<String, dynamic>> recipes; // List of all recipes
   final List<Map<String, dynamic>> favoriteRecipes; // List of favorite recipes
 
-  HomeScreen({Key? key, required this.recipes, required this.favoriteRecipes})
-      : super(key: key);
+  const HomeScreen({super.key, required this.recipes, required this.favoriteRecipes});
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -20,10 +19,10 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Recipe List'), // Title displayed on the app bar
+        title: const Text('Recipe List'), // Title displayed on the app bar
         actions: [
           IconButton(
-            icon: Icon(
+            icon: const Icon(
               Icons.favorite,
               color: Colors.red
             ), // Icon button to navigate to favorites screen
@@ -73,7 +72,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 width: MediaQuery.of(context).size.width *
                     0.8, // Set container width to 80% of screen width
                 height: 80.0, // Fixed height for each recipe item
-                margin: EdgeInsets.symmetric(
+                margin: const EdgeInsets.symmetric(
                     horizontal: 12.5, vertical: 8.0), // Add margin for spacing
 
                 // Row widget to display the recipe title and like button
@@ -86,7 +85,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: Container(
                         color:
                             Colors.blue[100], // Background color for the title
-                        padding: EdgeInsets.all(
+                        padding: const EdgeInsets.all(
                             16.0), // Padding inside the title container
 
                         // Centered text widget to display the recipe name
@@ -94,7 +93,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: Text(
                             recipe['name'], // Display the recipe name
                             textAlign: TextAlign.center,
-                            style: TextStyle(
+                            style: const TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold), // Text styling
                           ),
@@ -111,10 +110,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       // IconButton for toggling favorites
                       child: IconButton(
                         icon: isFavorite
-                            ? Icon(Icons.favorite,
+                            ? const Icon(Icons.favorite,
                                 color: Colors
                                     .red) // Red heart if recipe is a favorite
-                            : Icon(Icons
+                            : const Icon(Icons
                                 .favorite_border), // Border heart if recipe is not a favorite
                         onPressed: () {
                           toggleFavorite(

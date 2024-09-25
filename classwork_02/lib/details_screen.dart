@@ -8,12 +8,11 @@ class DetailsScreen extends StatefulWidget {
   final Function(Map<String, dynamic>)
       toggleFavorite; // Function to toggle favorite status
 
-  DetailsScreen(
-      {Key? key,
+  const DetailsScreen(
+      {super.key,
       required this.recipe,
       required this.favoriteRecipes,
-      required this.toggleFavorite})
-      : super(key: key);
+      required this.toggleFavorite});
 
   @override
   _DetailsScreenState createState() => _DetailsScreenState();
@@ -69,13 +68,13 @@ class _DetailsScreenState extends State<DetailsScreen> {
                   CrossAxisAlignment.start, // Align items to the start
               children: [
                 // Ingredients section header
-                Text(
+                const Text(
                   'Ingredients:',
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 24), // Bold and larger text for the header
                 ),
-                SizedBox(height: 8), // Space below the header
+                const SizedBox(height: 8), // Space below the header
 
                 // Container for the ingredients list
                 Container(
@@ -90,11 +89,11 @@ class _DetailsScreenState extends State<DetailsScreen> {
                         color: Colors.grey.withOpacity(0.2),
                         spreadRadius: 1,
                         blurRadius: 5,
-                        offset: Offset(0, 3), // Shadow position
+                        offset: const Offset(0, 3), // Shadow position
                       ),
                     ],
                   ),
-                  padding: EdgeInsets.all(16.0), // Padding inside the container
+                  padding: const EdgeInsets.all(16.0), // Padding inside the container
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment
                         .start, // Align ingredients to the start
@@ -104,16 +103,16 @@ class _DetailsScreenState extends State<DetailsScreen> {
                             bottom: 8.0), // Space between each ingredient
                         child: Row(
                           children: [
-                            Icon(Icons.circle,
+                            const Icon(Icons.circle,
                                 size: 8), // Bullet point for each ingredient
-                            SizedBox(
+                            const SizedBox(
                                 width:
                                     8), // Space between bullet point and text
                             Expanded(
                               child: Text(
                                 ingredient
                                     .trim(), // Display the ingredient name
-                                style: TextStyle(
+                                style: const TextStyle(
                                     fontSize:
                                         18), // Font size for ingredient text
                               ),
@@ -124,17 +123,17 @@ class _DetailsScreenState extends State<DetailsScreen> {
                     }).toList(),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                     height: 16), // Space between ingredients and instructions
 
                 // Instructions section header
-                Text(
+                const Text(
                   'Instructions:',
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 24), // Bold and larger text for the header
                 ),
-                SizedBox(height: 8), // Space below the header
+                const SizedBox(height: 8), // Space below the header
 
                 // Container for the instructions list
                 Container(
@@ -149,11 +148,11 @@ class _DetailsScreenState extends State<DetailsScreen> {
                         color: Colors.grey.withOpacity(0.2),
                         spreadRadius: 1,
                         blurRadius: 5,
-                        offset: Offset(0, 3), // Shadow position
+                        offset: const Offset(0, 3), // Shadow position
                       ),
                     ],
                   ),
-                  padding: EdgeInsets.all(16.0), // Padding inside the container
+                  padding: const EdgeInsets.all(16.0), // Padding inside the container
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment
                         .start, // Align instructions to the start
@@ -163,16 +162,16 @@ class _DetailsScreenState extends State<DetailsScreen> {
                             bottom: 8.0), // Space between each instruction
                         child: Row(
                           children: [
-                            Icon(Icons.circle,
+                            const Icon(Icons.circle,
                                 size: 8), // Bullet point for each instruction
-                            SizedBox(
+                            const SizedBox(
                                 width:
                                     8), // Space between bullet point and text
                             Expanded(
                               child: Text(
                                 instruction
                                     .trim(), // Display the instruction text
-                                style: TextStyle(
+                                style: const TextStyle(
                                     fontSize:
                                         18), // Font size for instruction text
                               ),

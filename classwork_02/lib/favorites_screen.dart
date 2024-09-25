@@ -8,15 +8,14 @@ class FavoritesScreen extends StatelessWidget {
   final Function(Map<String, dynamic>)
       toggleFavorite; // Function to toggle favorite status
 
-  FavoritesScreen(
-      {Key? key, required this.favoriteRecipes, required this.toggleFavorite})
-      : super(key: key);
+  const FavoritesScreen(
+      {super.key, required this.favoriteRecipes, required this.toggleFavorite});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Favorite Recipes'), // Title of the app bar
+        title: const Text('Favorite Recipes'), // Title of the app bar
       ),
       body: Container(
         color: Colors.blue[50], // Light blue background color for the body
@@ -46,7 +45,7 @@ class FavoritesScreen extends StatelessWidget {
                   width: MediaQuery.of(context).size.width *
                       0.8, // Set width to 80% of screen width
                   height: 80.0, // Fixed height for uniformity in the list
-                  margin: EdgeInsets.symmetric(
+                  margin: const EdgeInsets.symmetric(
                       horizontal: 12.5,
                       vertical: 8.0), // Margin for spacing between items
                   decoration: BoxDecoration(
@@ -60,7 +59,7 @@ class FavoritesScreen extends StatelessWidget {
                         color: Colors.grey.withOpacity(0.2),
                         spreadRadius: 1,
                         blurRadius: 5,
-                        offset: Offset(0, 3), // Position of shadow
+                        offset: const Offset(0, 3), // Position of shadow
                       ),
                     ],
                   ),
@@ -72,7 +71,7 @@ class FavoritesScreen extends StatelessWidget {
                         favoriteRecipes[index]
                             ['name'], // Display the name of the favorite recipe
                         textAlign: TextAlign.center, // Center align the text
-                        style: TextStyle(
+                        style: const TextStyle(
                             fontSize: 18,
                             fontWeight:
                                 FontWeight.bold), // Text style for recipe name

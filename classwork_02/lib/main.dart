@@ -6,6 +6,8 @@ void main() {
 }
 
 class RecipeBookApp extends StatelessWidget {
+  const RecipeBookApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     final List<Map<String, String>> recipes = [
@@ -73,7 +75,7 @@ class RecipeBookApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: HomeScreen(recipes: recipes, favoriteRecipes: []),
+      home: HomeScreen(recipes: recipes, favoriteRecipes: const []),
     );
   }
 }
