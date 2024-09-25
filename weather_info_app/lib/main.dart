@@ -33,7 +33,7 @@ class weatherApp extends StatelessWidget {
               // A small space of 5 pixels between widgets
               const SizedBox(height: 5),
 
-              // A container that holds the input field and button
+              // A container that holds the input field and buttons
               Container(
                 // The container's height is 30% of the screen height
                 height: MediaQuery.of(context).size.height * 0.3,
@@ -79,60 +79,94 @@ class weatherApp extends StatelessWidget {
                     ),
 
                     // Adds 10 pixels of vertical space after the text field
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 5),
 
-                    // Button to fetch the weather when clicked
+                    // Button to fetch the current weather when clicked
                     SizedBox(
                       // The button takes up 50% of the screen width
                       width: MediaQuery.of(context).size.width * 0.5,
 
                       child: ElevatedButton(
-                      // Button action when pressed (currently empty)
-                      onPressed: () {},
+                        // Button action when pressed (currently empty)
+                        onPressed: () {},
 
-                      // Button styling, with a black background
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.black,
-                        // Ensure the text color is white for better visibility
-                        foregroundColor: Colors.white,
+                        // Button styling, with a black background
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.black,
+                          // Ensure the text color is white for better visibility
+                          foregroundColor: Colors.white,
+                          textStyle: TextStyle(fontSize: 15),
+                        ),
+
+                        // Text displayed on the button with a white color
+                        child: const Text(
+                          'Fetch Weather',
+                          style: TextStyle(color: Colors.white), // Set text color to white
+                        ),
                       ),
-
-                      // Text displayed on the button with a white color
-                      child: const Text(
-                        'Fetch Weather',
-                        style: TextStyle(color: Colors.white), // Set text color to white
-                      ),
                     ),
 
-                    ),
-
-                    // Adds 20 pixels of vertical space after the button
-                    const SizedBox(height: 20),
-
-                    // Placeholder text for displaying the city name (to be updated later)
-                    const Text(
-                      'City: ',
-                      style: TextStyle(fontSize: 18),
-                    ),
-
-                    // Adds 5 pixels of vertical space after the city text
+                    // Adds 10 pixels of vertical space after the current weather button
                     const SizedBox(height: 5),
 
-                    // Placeholder text for displaying the temperature (to be updated later)
-                    const Text(
-                      'Temperature: ',
-                      style: TextStyle(fontSize: 18),
-                    ),
+                    // Button to fetch the 7-day weather forecast when clicked
+                    SizedBox(
+                      // The button takes up 50% of the screen width
+                      width: MediaQuery.of(context).size.width * 0.5,
 
-                    // Adds 5 pixels of vertical space after the temperature text
-                    const SizedBox(height: 5),
+                      child: ElevatedButton(
+                        // Button action for 7-day forecast (currently empty)
+                        onPressed: () {},
 
-                    // Placeholder text for displaying the weather condition (to be updated later)
-                    const Text(
-                      'Condition: ',
-                      style: TextStyle(fontSize: 18),
+                        // Button styling, with a green background
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.black,
+                          foregroundColor: Colors.white,
+                          textStyle: TextStyle(fontSize: 15),
+                        ),
+
+                        // Text displayed on the 7-day forecast button
+                        child: const Text(
+                          '7-Day Forecast',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
                     ),
                   ],
+                ),
+              ),
+
+              // Adds 20 pixels of vertical space after the buttons
+              const SizedBox(height: 20),
+
+              // Placeholder for 7-day forecast section
+              const Text(
+                '7-Day Forecast:',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+
+              const SizedBox(height: 20),
+
+              // 7-day forecast displayed as a horizontally scrollable row
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: List.generate(7, (index) {
+                      return Container(
+                        color: Colors.white,
+                        margin: const EdgeInsets.symmetric(horizontal: 5.5),
+                        child: Column(
+                          children: [
+                            const Icon(Icons.wb_sunny),
+                            Text('Day ${index + 1}'),
+                            const Text('Temp: --°C'),
+                          ],
+                        ),
+                      );
+                    }),
+                  ),
                 ),
               ),
             ],
