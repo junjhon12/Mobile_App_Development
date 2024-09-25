@@ -87,17 +87,23 @@ class weatherApp extends StatelessWidget {
                       width: MediaQuery.of(context).size.width * 0.5,
 
                       child: ElevatedButton(
-                        // Button action when pressed (currently empty)
-                        onPressed: () {},
+                      // Button action when pressed (currently empty)
+                      onPressed: () {},
 
-                        // Button styling, with a green background
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green,
-                        ),
-
-                        // Text displayed on the button
-                        child: const Text('Fetch Weather'),
+                      // Button styling, with a black background
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.black,
+                        // Ensure the text color is white for better visibility
+                        foregroundColor: Colors.white,
                       ),
+
+                      // Text displayed on the button with a white color
+                      child: const Text(
+                        'Fetch Weather',
+                        style: TextStyle(color: Colors.white), // Set text color to white
+                      ),
+                    ),
+
                     ),
 
                     // Adds 20 pixels of vertical space after the button
