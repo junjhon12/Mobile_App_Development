@@ -79,7 +79,7 @@ class weatherApp extends StatelessWidget {
                     ),
 
                     // Adds 10 pixels of vertical space after the text field
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 5),
 
                     // Button to fetch the current weather when clicked
                     SizedBox(
@@ -107,7 +107,7 @@ class weatherApp extends StatelessWidget {
                     ),
 
                     // Adds 10 pixels of vertical space after the current weather button
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 5),
 
                     // Button to fetch the 7-day weather forecast when clicked
                     SizedBox(
@@ -145,7 +145,7 @@ class weatherApp extends StatelessWidget {
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
 
-              const SizedBox(height: 10),
+              const SizedBox(height: 20),
 
               // 7-day forecast displayed as a horizontally scrollable row
               Padding(
@@ -155,7 +155,8 @@ class weatherApp extends StatelessWidget {
                   child: Row(
                     children: List.generate(7, (index) {
                       return Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 5.0),
+                        color: Colors.white,
+                        margin: const EdgeInsets.symmetric(horizontal: 5.5),
                         child: Column(
                           children: [
                             const Icon(Icons.wb_sunny),
@@ -168,9 +169,6 @@ class weatherApp extends StatelessWidget {
                   ),
                 ),
               ),
-
-              // Adds some space at the bottom
-              const SizedBox(height: 20),
             ],
           ),
         ),
