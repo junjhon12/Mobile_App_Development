@@ -1,171 +1,276 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 void main() {
-  // The main function starts the Flutter app
-  runApp(const weatherApp());
+  runApp(const WeatherApp());
 }
 
-// The main app widget is a stateless widget (does not change state)
-class weatherApp extends StatelessWidget {
-  const weatherApp({super.key});
+class WeatherApp extends StatefulWidget {
+  const WeatherApp({super.key});
 
-  // The build method describes the UI and returns a widget tree
+  @override
+  State<WeatherApp> createState() => _WeatherAppState();
+}
+
+class _WeatherAppState extends State<WeatherApp> {
+  String cityName = '';
+  String temperature = '--';
+  String weatherCondition = '--';
+  List<Map<String, dynamic>> forecast = List.generate(7, (index) => {
+        'day': 'Day ${index + 1}',
+        'temp': '--',
+        'condition': 'N/A',
+      });
+
+  // List to hold city name suggestions
+  List<String> citySuggestions = [];
+
+  // Fetch current weather with city input
+  Future<void> fetchWeather() async {
+    final apiKey = '56a7f11b63575f9939d2ff1f63603240'; // Your API key
+    final url = Uri.parse(
+        'https://api.openweathermap.org/data/2.5/weather?q=$cityName&appid=$apiKey&units=metric');
+
+    try {
+      final response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        setState(() {
+          temperature = data['main']['temp'].toString();
+          weatherCondition = data['weather'][0]['description'];
+        });
+
+        // Fetch 7-day forecast based on coordinates
+        double lat = data['coord']['lat'];
+        double lon = data['coord']['lon'];
+        await fetch7DayForecast(lat, lon);
+      } else {
+        setState(() {
+          temperature = '--';
+          weatherCondition = 'City not found';
+        });
+      }
+    } catch (e) {
+      setState(() {
+        temperature = '--';
+        weatherCondition = 'Error fetching data';
+      });
+    }
+  }
+
+  // Fetch the 7-day forecast using OpenWeather One Call API
+  Future<void> fetch7DayForecast(double lat, double lon) async {
+    final apiKey = '56a7f11b63575f9939d2ff1f63603240'; // Your API key
+    final url = Uri.parse(
+        'https://api.openweathermap.org/data/2.5/onecall?lat=$lat&lon=$lon&exclude=current,minutely,hourly,alerts&appid=$apiKey&units=metric');
+
+    try {
+      final response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        
+        // Update the forecast data in the state
+        setState(() {
+          forecast = List.generate(7, (index) {
+            final dayData = data['daily'][index];
+            return {
+              'day': formatDate(dayData['dt']),
+              'temp': dayData['temp']['day'].toString(),
+              'condition': dayData['weather'][0]['description'],
+            };
+          });
+        });
+      }
+    } catch (e) {
+      // Error handling for forecast data
+      setState(() {
+        forecast = List.generate(7, (index) => {
+              'day': 'Day ${index + 1}',
+              'temp': '--',
+              'condition': 'Error fetching data',
+            });
+      });
+    }
+  }
+
+  // Convert Unix timestamp to readable date
+  String formatDate(int timestamp) {
+    final date = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000);
+    return '${date.month}/${date.day}';
+  }
+
+  // Fetch city suggestions based on user input
+  Future<void> fetchCitySuggestions(String input) async {
+    final apiKey = '56a7f11b63575f9939d2ff1f63603240'; // Your API key
+    final url = Uri.parse(
+        'http://api.openweathermap.org/data/2.5/find?q=$input&appid=$apiKey&units=metric');
+
+    try {
+      final response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        setState(() {
+          citySuggestions = (data['list'] as List)
+              .map((city) => city['name'])
+              .toList()
+              .cast<String>()
+              .where((city) => city.toLowerCase().contains(input.toLowerCase())) // Filter based on input
+              .toList();
+        });
+      } else {
+        setState(() {
+          citySuggestions = [];
+        });
+      }
+    } catch (e) {
+      setState(() {
+        citySuggestions = [];
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      // Removes the default debug banner on the top-right corner
       debugShowCheckedModeBanner: false,
-
-      // The main UI layout of the app
       home: Scaffold(
-        // Top app bar with the title 'Weather App'
         appBar: AppBar(
-          // Centers the title 'Weather App' in the app bar
           title: const Center(child: Text('Weather App')),
         ),
-
-        // Body of the app
         body: Center(
-          // Centers the content vertically and horizontally
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // A small space of 5 pixels between widgets
               const SizedBox(height: 5),
-
-              // A container that holds the input field and buttons
               Container(
-                // The container's height is 30% of the screen height
-                height: MediaQuery.of(context).size.height * 0.3,
-
-                // The container's width is 60% of the screen width
+                height: MediaQuery.of(context).size.height * 0.4,
                 width: MediaQuery.of(context).size.width * 0.6,
-
-                // Adds padding (spacing inside the container) of 5 pixels
                 padding: const EdgeInsets.all(5),
-
-                // Applies rounded corners to the container
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
                 ),
-
-                // A column inside the container to stack its content vertically
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    // Label for the city name input field
-                    const Text(
-                      'City name',
-                      style: TextStyle(color: Colors.black, fontSize: 20),
+                    // Display city suggestions above the text field
+                    Container(
+                      height: 150, // Fixed height for the suggestions list
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(10),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Colors.black12,
+                            blurRadius: 4,
+                            offset: Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: citySuggestions.isNotEmpty
+                              ? citySuggestions.map((city) {
+                                  return ListTile(
+                                    title: Text(city),
+                                    onTap: () {
+                                      setState(() {
+                                        cityName = city;
+                                        citySuggestions = []; // Clear suggestions after selection
+                                      });
+                                      fetchWeather(); // Fetch weather for the selected city
+                                    },
+                                  );
+                                }).toList()
+                              : [
+                                  const ListTile(
+                                    title: Text('No suggestions'),
+                                  ),
+                                ],
+                        ),
+                      ),
                     ),
-                    // Adds 5 pixels of vertical space after the label
                     const SizedBox(height: 5),
 
-                    // Input field for users to type the city name
                     TextField(
+                      onChanged: (value) {
+                        cityName = value;
+                        fetchCitySuggestions(value); // Fetch city suggestions
+                      },
                       decoration: InputDecoration(
-                        // Background color for the text field
                         fillColor: Colors.white,
                         filled: true,
-
-                        // Border styling with rounded corners
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
-
-                        // Hint text that appears inside the text field
                         hintText: 'Enter your city name',
                       ),
                     ),
-
-                    // Adds 10 pixels of vertical space after the text field
                     const SizedBox(height: 5),
-
-                    // Button to fetch the current weather when clicked
                     SizedBox(
-                      // The button takes up 50% of the screen width
                       width: MediaQuery.of(context).size.width * 0.5,
-
                       child: ElevatedButton(
-                        // Button action when pressed (currently empty)
-                        onPressed: () {},
-
-                        // Button styling, with a black background
+                        onPressed: fetchWeather,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.black,
-                          // Ensure the text color is white for better visibility
                           foregroundColor: Colors.white,
-                          textStyle: TextStyle(fontSize: 15),
+                          textStyle: const TextStyle(fontSize: 15),
                         ),
-
-                        // Text displayed on the button with a white color
                         child: const Text(
                           'Fetch Weather',
-                          style: TextStyle(color: Colors.white), // Set text color to white
-                        ),
-                      ),
-                    ),
-
-                    // Adds 10 pixels of vertical space after the current weather button
-                    const SizedBox(height: 5),
-
-                    // Button to fetch the 7-day weather forecast when clicked
-                    SizedBox(
-                      // The button takes up 50% of the screen width
-                      width: MediaQuery.of(context).size.width * 0.5,
-
-                      child: ElevatedButton(
-                        // Button action for 7-day forecast (currently empty)
-                        onPressed: () {},
-
-                        // Button styling, with a green background
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.black,
-                          foregroundColor: Colors.white,
-                          textStyle: TextStyle(fontSize: 15),
-                        ),
-
-                        // Text displayed on the 7-day forecast button
-                        child: const Text(
-                          '7-Day Forecast',
                           style: TextStyle(color: Colors.white),
                         ),
                       ),
                     ),
+                    const SizedBox(height: 5),
+                    Row(
+                      children: [
+                        Text(
+                          'Temperature: $temperature°C',
+                          style: const TextStyle(fontSize: 20,),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Text(
+                          'Condition: $weatherCondition',
+                          style: const TextStyle(fontSize: 20),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ),
-
-              // Adds 20 pixels of vertical space after the buttons
               const SizedBox(height: 20),
-
-              // Placeholder for 7-day forecast section
               const Text(
                 '7-Day Forecast:',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
-
               const SizedBox(height: 20),
-
-              // 7-day forecast displayed as a horizontally scrollable row
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10.0),
                 child: SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Row(
-                    children: List.generate(7, (index) {
+                    children: forecast.map((dayData) {
                       return Container(
                         color: Colors.white,
                         margin: const EdgeInsets.symmetric(horizontal: 5.5),
+                        padding: const EdgeInsets.all(8.0),
                         child: Column(
                           children: [
                             const Icon(Icons.wb_sunny),
-                            Text('Day ${index + 1}'),
-                            const Text('Temp: --°C'),
+                            Text(dayData['day']),
+                            Text('Temp: ${dayData['temp']}°C'),
+                            Text(dayData['condition']),
                           ],
                         ),
                       );
-                    }),
+                    }).toList(),
                   ),
                 ),
               ),
