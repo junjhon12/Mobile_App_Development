@@ -6,6 +6,8 @@ void main() {
 
 // Main Calculator App Widget
 class CalculatorApp extends StatelessWidget {
+  const CalculatorApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -18,6 +20,8 @@ class CalculatorApp extends StatelessWidget {
 
 // Home Page Widget with Calculator functionality
 class CalculatorHomePage extends StatefulWidget {
+  const CalculatorHomePage({super.key});
+
   @override
   _CalculatorHomePageState createState() => _CalculatorHomePageState();
 }
@@ -93,12 +97,12 @@ class _CalculatorHomePageState extends State<CalculatorHomePage> {
         child: TextButton(
           style: TextButton.styleFrom(
             backgroundColor: color,
-            padding: EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(16.0),
           ),
           onPressed: onPressed, // Call the corresponding function on press
           child: Text(
             text,
-            style: TextStyle(fontSize: 24, color: Colors.white), // Text styling
+            style: const TextStyle(fontSize: 24, color: Colors.white), // Text styling
           ),
         ),
       ),
@@ -108,26 +112,26 @@ class _CalculatorHomePageState extends State<CalculatorHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Calculator')), // App title
+      appBar: AppBar(title: const Text('Calculator')), // App title
       body: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: <Widget>[
           // Displays the current operation (e.g., "5 + 3")
           Container(
-            padding: EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16),
             alignment: Alignment.centerRight,
             child: Text(
               currentOperation,
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.normal),
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.normal),
             ),
           ),
           // Displays the current input or result
           Container(
-            padding: EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16),
             alignment: Alignment.centerRight,
             child: Text(
               displayText,
-              style: TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
             ),
           ),
           // Row of number and operator buttons
