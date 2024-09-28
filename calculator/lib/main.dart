@@ -4,61 +4,60 @@ void main() {
   runApp(CalculatorApp());
 }
 
-// Main App Widget
+// Main Calculator App Widget
 class CalculatorApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Calculator App',
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: CalculatorHomePage(),
+      home: CalculatorHomePage(), // Home screen of the calculator
     );
   }
 }
 
-// Calculator Home Page
+// Home Page Widget with Calculator functionality
 class CalculatorHomePage extends StatefulWidget {
   @override
   _CalculatorHomePageState createState() => _CalculatorHomePageState();
 }
 
 class _CalculatorHomePageState extends State<CalculatorHomePage> {
-  String displayText = "0";  // Display area text
-  String currentOperation = "";  // Track the ongoing calculation
-  double firstOperand = 0;   // First number in the operation
-  double secondOperand = 0;  // Second number in the operation
-  String operator = "";      // Stores the operator (+, -, *, /)
-  String result = "0";       // Stores the result of the operation
+  String displayText = "0";      // Display area for the current input
+  String currentOperation = "";  // Displays the ongoing calculation
+  double firstOperand = 0;       // First number in the operation
+  double secondOperand = 0;      // Second number in the operation
+  String operator = "";          // Stores the selected operator (+, -, *, /)
+  String result = "0";           // Stores the result of the calculation
 
-  // Function to handle number input
+  // Function to handle number button press
   void numberPressed(String number) {
     setState(() {
       if (displayText == "0") {
-        displayText = number;
+        displayText = number; // Replace "0" with the number
       } else {
-        displayText += number;
+        displayText += number; // Append the number to the current input
       }
-      // Update current operation display
-      currentOperation += number;
+      currentOperation += number; // Update the current operation string
     });
   }
 
-  // Function to handle operator input
+  // Function to handle operator button press
   void operatorPressed(String op) {
     setState(() {
-      firstOperand = double.parse(displayText);
-      operator = op;
-      displayText = "0"; // Reset display for second operand input
-
-      // Update current operation display
-      currentOperation += " $op ";
+      firstOperand = double.parse(displayText); // Save the first operand
+      operator = op; // Store the operator
+      displayText = "0"; // Reset display for the next number
+      currentOperation += " $op "; // Show the selected operator
     });
   }
 
-  // Function to handle calculations
+  // Function to perform the calculation when "=" is pressed
   void calculate() {
     setState(() {
-      secondOperand = double.parse(displayText);
+      secondOperand = double.parse(displayText); // Get the second operand
+
+      // Perform the operation based on the operator
       if (operator == "+") {
         result = (firstOperand + secondOperand).toString();
       } else if (operator == "-") {
@@ -68,26 +67,25 @@ class _CalculatorHomePageState extends State<CalculatorHomePage> {
       } else if (operator == "/") {
         result = secondOperand != 0 ? (firstOperand / secondOperand).toString() : "Error";
       }
-      displayText = result;
 
-      // Update current operation display with result
-      currentOperation += " = $result";
+      displayText = result; // Display the result
+      currentOperation += " = $result"; // Show the result in the current operation string
     });
   }
 
-  // Function to handle clearing the calculator
+  // Function to clear the calculator's display and reset variables
   void clear() {
     setState(() {
-      displayText = "0";
+      displayText = "0"; // Reset display to "0"
       firstOperand = 0;
       secondOperand = 0;
       operator = "";
       result = "0";
-      currentOperation = ""; // Clear the current operation
+      currentOperation = ""; // Clear the current operation display
     });
   }
 
-  // Build number button
+  // Helper function to build calculator buttons
   Widget buildButton(String text, Color color, VoidCallback onPressed) {
     return Expanded(
       child: Padding(
@@ -97,10 +95,10 @@ class _CalculatorHomePageState extends State<CalculatorHomePage> {
             backgroundColor: color,
             padding: EdgeInsets.all(16.0),
           ),
-          onPressed: onPressed,
+          onPressed: onPressed, // Call the corresponding function on press
           child: Text(
             text,
-            style: TextStyle(fontSize: 24, color: Colors.white),
+            style: TextStyle(fontSize: 24, color: Colors.white), // Text styling
           ),
         ),
       ),
@@ -110,11 +108,11 @@ class _CalculatorHomePageState extends State<CalculatorHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Calculator')),
+      appBar: AppBar(title: Text('Calculator')), // App title
       body: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: <Widget>[
-          // Display Area for Current Operation (Shows ongoing calculation)
+          // Displays the current operation (e.g., "5 + 3")
           Container(
             padding: EdgeInsets.all(16),
             alignment: Alignment.centerRight,
@@ -123,7 +121,7 @@ class _CalculatorHomePageState extends State<CalculatorHomePage> {
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.normal),
             ),
           ),
-          // Display Area for Result
+          // Displays the current input or result
           Container(
             padding: EdgeInsets.all(16),
             alignment: Alignment.centerRight,
@@ -132,7 +130,7 @@ class _CalculatorHomePageState extends State<CalculatorHomePage> {
               style: TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
             ),
           ),
-          // Number Buttons
+          // Row of number and operator buttons
           Row(
             children: <Widget>[
               buildButton("7", Colors.blue, () => numberPressed("7")),
@@ -160,7 +158,7 @@ class _CalculatorHomePageState extends State<CalculatorHomePage> {
           Row(
             children: <Widget>[
               buildButton("0", Colors.blue, () => numberPressed("0")),
-              buildButton("C", Colors.red, () => clear()),   // Clear button
+              buildButton("C", Colors.red, () => clear()), // Clear button
               buildButton("=", Colors.green, () => calculate()), // Equals button
               buildButton("+", Colors.orange, () => operatorPressed("+")),
             ],
