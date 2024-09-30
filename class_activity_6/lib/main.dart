@@ -85,24 +85,46 @@ class MyHomePage extends StatelessWidget {
                 style: Theme.of(context).textTheme.headlineMedium,
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 5),
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ElevatedButton(
                   onPressed: () {
                     var counter = context.read<Counter>();
-                    counter.increment(); // Increments the value
+                    counter.increment();
                   },
-                  child: const Text('Increase Age'), // Text for increasing age
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                          (Set<MaterialState> states) {
+                        if (states.contains(MaterialState.pressed)) {
+                          return Colors.lightBlue; // Light blue when pressed
+                        }
+                        return Colors.blue; // Default background color
+                      },
+                    ),
+                    foregroundColor: MaterialStateProperty.all<Color>(Colors.white), // White text color
+                  ),
+                  child: const Text('Increase Age'),
                 ),
                 const SizedBox(width: 20),
                 ElevatedButton(
                   onPressed: () {
                     var counter = context.read<Counter>();
-                    counter.decrement(); // Decrements the value
+                    counter.decrement();
                   },
-                  child: const Text('Decrease Age'), // Text for decreasing age
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                          (Set<MaterialState> states) {
+                        if (states.contains(MaterialState.pressed)) {
+                          return Colors.lightBlue; // Light blue when pressed
+                        }
+                        return Colors.blue; // Default background color
+                      },
+                    ),
+                    foregroundColor: MaterialStateProperty.all<Color>(Colors.white), // White text color
+                  ),
+                  child: const Text('Decrease Age'),
                 ),
               ],
             ),
