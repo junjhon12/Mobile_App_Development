@@ -297,7 +297,7 @@ class _DigiHomePageState extends State<DigiHomePage> {
                   child: const Text('😴'), // Button label
                 ),
               ),
-              SizedBox(width: 5),
+              const SizedBox(width: 5),
               // Play button
               Expanded(
                 child: ElevatedButton(
@@ -309,7 +309,7 @@ class _DigiHomePageState extends State<DigiHomePage> {
                   child: const Text('🏃‍♂️'), // Button label
                 ),
               ),
-              SizedBox(width: 5),
+              const SizedBox(width: 5),
               // Feed button
               Expanded(
                 child: ElevatedButton(
@@ -321,7 +321,7 @@ class _DigiHomePageState extends State<DigiHomePage> {
                   child: const Text('🍽️'), // Button label
                 ),
               ),
-              SizedBox(width: 5),
+              const SizedBox(width: 5),
               // Train button
               Expanded(
                 child: ElevatedButton(
@@ -333,7 +333,7 @@ class _DigiHomePageState extends State<DigiHomePage> {
                   child: const Text('🏋️‍♂️'), // Button label
                 ),
               ),
-              SizedBox(width: 5),
+              const SizedBox(width: 5),
               // Reset button
               Expanded(
                 child: ElevatedButton(

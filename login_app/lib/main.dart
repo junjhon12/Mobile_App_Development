@@ -24,10 +24,15 @@ class MyApp extends StatelessWidget {
             ),
           ],
         ),
+
+        // Main body content
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center, // Center everything vertically
             children: [
+              
+              // Space above the container
+              const SizedBox(height: 20),
               
               // Container for username and password fields
               Container(
@@ -38,6 +43,8 @@ class MyApp extends StatelessWidget {
                   color: Colors.blue,
                   borderRadius: BorderRadius.circular(10), // Rounded corners
                 ),
+                
+                // Column inside the container
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -47,7 +54,10 @@ class MyApp extends StatelessWidget {
                       'Username',
                       style: TextStyle(color: Colors.white, fontSize: 18),
                     ),
-                    const SizedBox(height: 8), // Space after the label
+                    
+                    // Space between the username label and text field
+                    const SizedBox(height: 8),
+                    
                     TextField(
                       decoration: InputDecoration(
                         fillColor: Colors.white,
@@ -58,14 +68,19 @@ class MyApp extends StatelessWidget {
                         hintText: 'Enter your username',
                       ),
                     ),
-                    const SizedBox(height: 16), // Space between username and password
+                    
+                    // Space between the username and password fields
+                    const SizedBox(height: 16),
 
                     // Password field
                     const Text(
                       'Password',
                       style: TextStyle(color: Colors.white, fontSize: 18),
                     ),
-                    const SizedBox(height: 8), // Space after the label
+                    
+                    // Space between the password label and text field
+                    const SizedBox(height: 8),
+                    
                     TextField(
                       obscureText: true, // Hides password input
                       decoration: InputDecoration(
@@ -80,13 +95,19 @@ class MyApp extends StatelessWidget {
                   ],
                 ),
               ),
-              
-              const SizedBox(height: 20), // Space between container and buttons
 
-              // Login Button
+              // Space between the container and the buttons
+              const SizedBox(height: 20),
+
+              // Row for login and sign-up buttons
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
+                  
+                  // Space between the buttons and container above
+                  const SizedBox(height: 10),
+                  
+                  // Login Button
                   SizedBox(
                     width: MediaQuery.of(context).size.width * 0.4, // Full-width button
                     child: ElevatedButton(
@@ -97,7 +118,9 @@ class MyApp extends StatelessWidget {
                       child: const Text('Login'),
                     ),
                   ),
-                  const SizedBox(height: 10), // Space between Login and Sign Up button
+                  
+                  // Space between the Login and Sign Up buttons
+                  const SizedBox(width: 10),
                   
                   // Sign Up Button
                   SizedBox(
