@@ -1,0 +1,1 @@
+ C:\\Users\\Quoc\ Bao\ Le\\Git\\Mobile_App_Development\\activity5_virtual_pet_digimon\\.dart_tool\\flutter_build\\56b4ca7bced1f46053e32c27ccbd77c2\\native_assets.yaml: 
