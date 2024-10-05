@@ -110,15 +110,15 @@ class MyHomePage extends StatelessWidget {
                     counter.increment(); // Call increment method
                   },
                   style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.resolveWith<Color>(
-                          (Set<MaterialState> states) {
-                        if (states.contains(MaterialState.pressed)) {
+                    backgroundColor: WidgetStateProperty.resolveWith<Color>(
+                          (Set<WidgetState> states) {
+                        if (states.contains(WidgetState.pressed)) {
                           return Colors.lightBlue; // Change color when pressed
                         }
                         return Colors.blue; // Default color
                       },
                     ),
-                    foregroundColor: MaterialStateProperty.all<Color>(Colors.white), // Set text color
+                    foregroundColor: WidgetStateProperty.all<Color>(Colors.white), // Set text color
                   ),
                   child: const Text('Increase Age'), // Button label
                 ),
@@ -130,15 +130,15 @@ class MyHomePage extends StatelessWidget {
                     counter.decrement(); // Call decrement method
                   },
                   style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.resolveWith<Color>(
-                          (Set<MaterialState> states) {
-                        if (states.contains(MaterialState.pressed)) {
+                    backgroundColor: WidgetStateProperty.resolveWith<Color>(
+                          (Set<WidgetState> states) {
+                        if (states.contains(WidgetState.pressed)) {
                           return Colors.lightBlue; // Change color when pressed
                         }
                         return Colors.blue; // Default color
                       },
                     ),
-                    foregroundColor: MaterialStateProperty.all<Color>(Colors.white), // Set text color
+                    foregroundColor: WidgetStateProperty.all<Color>(Colors.white), // Set text color
                   ),
                   child: const Text('Decrease Age'), // Button label
                 ),
