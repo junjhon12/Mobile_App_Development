@@ -1,5 +1,5 @@
 // Tricky Halloween Game: Spooky Surprise
-// Team Members: [Your Name, Partner's Name]
+// Team Members: [junjhon1, anshuk-arun]
 
 import 'package:flutter/material.dart';
 import 'dart:math';
