@@ -6,6 +6,8 @@ void main() {
 
 // Main application widget
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -16,6 +18,8 @@ class MyApp extends StatelessWidget {
 
 // Stateful widget for multiple animations
 class AnimationDemo extends StatefulWidget {
+  const AnimationDemo({super.key});
+
   @override
   _AnimationDemoState createState() => _AnimationDemoState();
 }

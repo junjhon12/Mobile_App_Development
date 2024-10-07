@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(CalculatorApp());
+  runApp(const CalculatorApp());
 }
 
 // Main Calculator App Widget
@@ -13,7 +13,7 @@ class CalculatorApp extends StatelessWidget {
     return MaterialApp(
       title: 'Calculator App',
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: CalculatorHomePage(), // Home screen of the calculator
+      home: const CalculatorHomePage(), // Home screen of the calculator
     );
   }
 }

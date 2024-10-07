@@ -95,7 +95,7 @@ class weatherApp extends StatelessWidget {
                           backgroundColor: Colors.black,
                           // Ensure the text color is white for better visibility
                           foregroundColor: Colors.white,
-                          textStyle: TextStyle(fontSize: 15),
+                          textStyle: const TextStyle(fontSize: 15),
                         ),
 
                         // Text displayed on the button with a white color
@@ -122,7 +122,7 @@ class weatherApp extends StatelessWidget {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.black,
                           foregroundColor: Colors.white,
-                          textStyle: TextStyle(fontSize: 15),
+                          textStyle: const TextStyle(fontSize: 15),
                         ),
 
                         // Text displayed on the 7-day forecast button

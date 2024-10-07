@@ -8,6 +8,8 @@ void main() {
 
 // This widget represents the main application
 class TaskManagerApp extends StatelessWidget {
+  const TaskManagerApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -19,6 +21,8 @@ class TaskManagerApp extends StatelessWidget {
 
 // StatefulWidget to manage the state of the task list
 class TaskListScreen extends StatefulWidget {
+  const TaskListScreen({super.key});
+
   @override
   _TaskListScreenState createState() => _TaskListScreenState();
 }
@@ -70,7 +74,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
     });
 
     return Scaffold(
-      appBar: AppBar(title: Text('Task Manager')), // App bar with title
+      appBar: AppBar(title: const Text('Task Manager')), // App bar with title
       body: Column(
         children: [
           // Input area for adding tasks
@@ -81,7 +85,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
                 Expanded(
                   child: TextField(
                     controller: taskController, // Connect the text field to the controller
-                    decoration: InputDecoration(labelText: 'Task Name'), // Label for the text field
+                    decoration: const InputDecoration(labelText: 'Task Name'), // Label for the text field
                   ),
                 ),
                 // Dropdown to select task priority
@@ -103,7 +107,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
                 ),
                 // Button to add the task
                 IconButton(
-                  icon: Icon(Icons.add), // Icon for adding a task
+                  icon: const Icon(Icons.add), // Icon for adding a task
                   onPressed: addTask, // Call addTask method on press
                 ),
               ],
@@ -121,7 +125,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
                     onChanged: (value) => toggleTaskCompletion(index), // Toggle completion status on checkbox change
                   ),
                   trailing: IconButton(
-                    icon: Icon(Icons.delete), // Icon for deleting a task
+                    icon: const Icon(Icons.delete), // Icon for deleting a task
                     onPressed: () => deleteTask(index), // Call deleteTask method on press
                   ),
                   subtitle: Text('Priority: ${tasks[index].priority}'), // Display task priority

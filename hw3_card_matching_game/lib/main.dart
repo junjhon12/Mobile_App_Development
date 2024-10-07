@@ -15,6 +15,8 @@ void main() {
 
 // The main widget of the application.
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -27,6 +29,8 @@ class MyApp extends StatelessWidget {
 
 // The main screen for the game, which is stateful.
 class GameScreen extends StatefulWidget {
+  const GameScreen({super.key});
+
   @override
   _GameScreenState createState() => _GameScreenState(); // Creates the state for GameScreen.
 }
@@ -45,7 +49,7 @@ class _GameScreenState extends State<GameScreen> {
 
   // Function to start a periodic timer that increments timeElapsed.
   void startTimer() {
-    timer = Timer.periodic(Duration(seconds: 1), (timer) {
+    timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (!isGameOver) { // Only update if the game is not over.
         setState(() {
           timeElapsed++; // Increment the elapsed time.
@@ -73,7 +77,7 @@ class _GameScreenState extends State<GameScreen> {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: Text('You Win!'), // Title of the dialog.
+          title: const Text('You Win!'), // Title of the dialog.
           content: Text('Your score: ${gameProvider.score}\nTime taken: $timeElapsed seconds'), // Victory message with score and time.
           actions: [
             TextButton(
@@ -81,7 +85,7 @@ class _GameScreenState extends State<GameScreen> {
                 Navigator.of(context).pop(); // Close the dialog.
                 restartGame(); // Restart the game logic.
               },
-              child: Text('Restart'), // Button to restart the game.
+              child: const Text('Restart'), // Button to restart the game.
             ),
           ],
         ),
@@ -107,7 +111,7 @@ class _GameScreenState extends State<GameScreen> {
     
     return Scaffold(
       appBar: AppBar(
-        title: Text('Card Matching Game'), // App bar title.
+        title: const Text('Card Matching Game'), // App bar title.
         actions: <Widget>[
           Padding(
             padding: const EdgeInsets.all(8.0),
@@ -123,12 +127,12 @@ class _GameScreenState extends State<GameScreen> {
             padding: const EdgeInsets.all(8.0),
             child: Text(
               'Time Elapsed: $timeElapsed seconds', // Display the timer.
-              style: TextStyle(fontSize: 18),
+              style: const TextStyle(fontSize: 18),
             ),
           ),
           Expanded(
             child: GridView.builder(
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 4, // Defines a grid with 4 columns.
               ),
               itemBuilder: (context, index) {
@@ -209,7 +213,7 @@ class GameProvider with ChangeNotifier {
       notifyListeners(); // Notify UI to update the score.
     } else {
       // If they don't match, hide both cards after a delay.
-      Future.delayed(Duration(seconds: 1), () {
+      Future.delayed(const Duration(seconds: 1), () {
         cards[firstIndex].isFaceUp = false; // Hide the first card.
         cards[secondIndex].isFaceUp = false; // Hide the second card.
         selectedCardIndices.clear(); // Clear the selected indices.
@@ -244,7 +248,7 @@ class FlipCard extends StatelessWidget {
   final String backDesign; // The back design of the card.
   final Function onTap; // Function to call when the card is tapped.
 
-  FlipCard({
+  const FlipCard({super.key, 
     required this.isFaceUp,
     required this.frontDesign,
     required this.backDesign,
@@ -256,11 +260,11 @@ class FlipCard extends StatelessWidget {
     return GestureDetector(
       onTap: () => onTap(), // Call the onTap function when the card is tapped.
       child: AnimatedContainer(
-        duration: Duration(milliseconds: 300), // Animation duration for flipping.
+        duration: const Duration(milliseconds: 300), // Animation duration for flipping.
         decoration: BoxDecoration(
           color: isFaceUp ? Colors.white : Colors.blue, // Change color based on card state.
           borderRadius: BorderRadius.circular(10), // Rounded corners.
-          boxShadow: [
+          boxShadow: const [
             BoxShadow(
               color: Colors.black26, // Shadow color.
               blurRadius: 6, // Blur radius for shadow.

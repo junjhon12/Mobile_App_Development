@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'home_screen.dart';
 
 void main() {
-  runApp(RecipeBookApp());
+  runApp(const RecipeBookApp());
 }
 
 class RecipeBookApp extends StatelessWidget {
