@@ -1,3 +1,5 @@
+<<<<<<< HEAD
+=======
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'dart:async';
@@ -287,3 +289,4 @@ class FlipCard extends StatelessWidget {
     );
   }
 }
+>>>>>>> 6b006f3 (created the git and file)
