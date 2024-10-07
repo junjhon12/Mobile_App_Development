@@ -1,5 +1,13 @@
 import 'package:flutter/material.dart';
 
+/*
+Halloween Interactive Game Challenge
+
+junjhon12
+anshuk-arun
+
+*/
+
 void main() {
   runApp(const MainApp());
 }
