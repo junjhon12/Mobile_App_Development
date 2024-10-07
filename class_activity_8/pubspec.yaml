@@ -9,10 +9,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-<<<<<<< HEAD
   audioplayers: ^0.20.1
-=======
->>>>>>> 6b006f3 (created the git and file)
 
 dev_dependencies:
   flutter_test:
