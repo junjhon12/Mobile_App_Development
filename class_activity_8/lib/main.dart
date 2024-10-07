@@ -9,20 +9,35 @@ anshuk-arun
 */
 
 void main() {
-  runApp(const MainApp());
+  runApp(const HalloweenApp());
 }
 
-class MainApp extends StatelessWidget {
-  const MainApp({super.key});
+class HalloweenApp extends StatelessWidget {
+  const HalloweenApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       home: Scaffold(
-        body: Center(
-          child: Text('Hello World!'),
+        body: Container(
+          
+          // Background Image
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage('assets/images/Burial_Hill.png'),
+              fit: BoxFit.cover,
+            ),
+          ),
+          
+          child: null,
+          
         ),
       ),
     );
   }
 }
+
+
+/*
+
+*/
