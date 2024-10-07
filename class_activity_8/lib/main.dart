@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
 // Tricky Halloween Game: Spooky Surprise
 // Team Members: [junjhon12, anshuk-arun]
 
