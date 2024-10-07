@@ -22,12 +22,19 @@ dev_dependencies:
 flutter:
   uses-material-design: true
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> dd118df (Thei mages are moving)
   
   assets:
     - assets/Bat.jfif
     - assets/Ghost.jfif
     - assets/Pumpkin.jfif
     - assets/Spider.jfif
+<<<<<<< HEAD
     - assets/Witch.jfif
 =======
 >>>>>>> 6b006f3 (created the git and file)
+=======
+    - assets/Witch.jfif
+>>>>>>> dd118df (Thei mages are moving)
