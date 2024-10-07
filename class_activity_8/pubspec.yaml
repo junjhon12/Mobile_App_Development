@@ -9,7 +9,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+<<<<<<< HEAD
   audioplayers: ^0.20.1
+=======
+>>>>>>> 6b006f3 (created the git and file)
 
 dev_dependencies:
   flutter_test:
@@ -18,6 +21,7 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+<<<<<<< HEAD
   
   assets:
     - assets/Bat.jfif
@@ -25,3 +29,5 @@ flutter:
     - assets/Pumpkin.jfif
     - assets/Spider.jfif
     - assets/Witch.jfif
+=======
+>>>>>>> 6b006f3 (created the git and file)

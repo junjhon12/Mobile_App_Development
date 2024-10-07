@@ -19,6 +19,8 @@ class MyApp extends StatelessWidget {
 
 // Stateful widget for multiple animations
 class AnimationDemo extends StatefulWidget {
+  const AnimationDemo({super.key});
+
   @override
   _AnimationDemoState createState() => _AnimationDemoState();
   _AnimationDemoState createState() => _AnimationDemoState();

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 // Tricky Halloween Game: Spooky Surprise
 // Team Members: [junjhon12, anshuk-arun]
 
@@ -85,6 +86,23 @@ class _TrickyHalloweenGameState extends State<TrickyHalloweenGame>
               style: TextStyle(fontSize: 24),
             ),
           ),
+=======
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const MainApp());
+}
+
+class MainApp extends StatelessWidget {
+  const MainApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(
+      home: Scaffold(
+        body: Center(
+          child: Text('Hello World!'),
+>>>>>>> 6b006f3 (created the git and file)
         ),
       ),
     );
