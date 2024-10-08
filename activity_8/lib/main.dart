@@ -3,6 +3,7 @@
 
 import 'package:flutter/material.dart';
 import 'dart:math';
+import 'package:audioplayers/audioplayers.dart';
 
 void main() {
   runApp(const TrickyHalloweenGame());
@@ -30,6 +31,12 @@ class _TrickyHalloweenGameState extends State<TrickyHalloweenGame>
         vsync: this, duration: const Duration(seconds: 2))
       ..repeat(reverse: true);
     _selectCorrectItem();
+  }
+
+  Future<void> _playBackgroundMusic(dynamic _backgroundPlayer, dynamic LoopMode) async {
+    await _backgroundPlayer.setAsset('assets/music2.mp3');
+    var setLoopMode = _backgroundPlayer.setLoopMode(LoopMode.one); // Loop the background music
+    var play = _backgroundPlayer.play();
   }
 
   void _selectCorrectItem() {
