@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 // Main application widget
@@ -10,7 +10,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       home: AnimationDemo(), // Set the home screen to AnimationDemo
       home: AnimationDemo(), // Set the home screen to AnimationDemo
     );
@@ -23,39 +23,40 @@ class AnimationDemo extends StatefulWidget {
 
   @override
   _AnimationDemoState createState() => _AnimationDemoState();
+  @override
   _AnimationDemoState createState() => _AnimationDemoState();
 }
 
 // State for AnimationDemo
 class _AnimationDemoState extends State<AnimationDemo> {
-  bool _isVisible = true; // Track visibility of the text
-  double _scaleFactor = 1.0; // Scale factor for scaling animation
-  double _rotation = 0.0; // Rotation angle for rotation animation
-  double _translateX = 0.0; // Translation offset for sliding animation
-  Color _textColor = Colors.black; // Text color for color-changing animation
+  final bool _isVisible = true; // Track visibility of the text
+  final double _scaleFactor = 1.0; // Scale factor for scaling animation
+  final double _rotation = 0.0; // Rotation angle for rotation animation
+  final double _translateX = 0.0; // Translation offset for sliding animation
+  final Color _textColor = Colors.black; // Text color for color-changing animation
 // State for AnimationDemo
 class _AnimationDemoState extends State<AnimationDemo> {
-  bool _isVisible = true; // Track visibility of the text
-  double _scaleFactor = 1.0; // Scale factor for scaling animation
-  double _rotation = 0.0; // Rotation angle for rotation animation
-  double _translateX = 0.0; // Translation offset for sliding animation
-  Color _textColor = Colors.black; // Text color for color-changing animation
+  bool isVisible = true; // Track visibility of the text
+  double scaleFactor = 1.0; // Scale factor for scaling animation
+  double rotation = 0.0; // Rotation angle for rotation animation
+  double translateX = 0.0; // Translation offset for sliding animation
+  Color textColor = Colors.black; // Text color for color-changing animation
 
   // Function to toggle visibility and initiate animations
   void toggleAnimations() {
   // Function to toggle visibility and initiate animations
   void toggleAnimations() {
     setState(() {
-      _isVisible = !_isVisible; // Toggle text visibility
-      _scaleFactor = _isVisible ? 1.0 : 1.5; // Scale up or down
-      _rotation = _isVisible ? 0.0 : 0.5; // Rotate 180 degrees
-      _translateX = _isVisible ? 0.0 : 100.0; // Slide to the right
-      _textColor = _isVisible ? Colors.black : Colors.red; // Change text color
-      _isVisible = !_isVisible; // Toggle text visibility
-      _scaleFactor = _isVisible ? 1.0 : 1.5; // Scale up or down
-      _rotation = _isVisible ? 0.0 : 0.5; // Rotate 180 degrees
-      _translateX = _isVisible ? 0.0 : 100.0; // Slide to the right
-      _textColor = _isVisible ? Colors.black : Colors.red; // Change text color
+      isVisible = !isVisible; // Toggle text visibility
+      scaleFactor = isVisible ? 1.0 : 1.5; // Scale up or down
+      rotation = isVisible ? 0.0 : 0.5; // Rotate 180 degrees
+      translateX = isVisible ? 0.0 : 100.0; // Slide to the right
+      textColor = isVisible ? Colors.black : Colors.red; // Change text color
+      isVisible = !isVisible; // Toggle text visibility
+      scaleFactor = isVisible ? 1.0 : 1.5; // Scale up or down
+      rotation = isVisible ? 0.0 : 0.5; // Rotate 180 degrees
+      translateX = isVisible ? 0.0 : 100.0; // Slide to the right
+      textColor = isVisible ? Colors.black : Colors.red; // Change text color
     });
   }
 
@@ -72,18 +73,18 @@ class _AnimationDemoState extends State<AnimationDemo> {
           children: [
             // Animation 1: Fading Text
             AnimatedOpacity(
-              opacity: _isVisible ? 1.0 : 0.0,
+              opacity: isVisible ? 1.0 : 0.0,
               duration: const Duration(seconds: 1),
               child: Text(
                 'Fading Text',
-                style: TextStyle(fontSize: 24, color: _textColor),
+                style: TextStyle(fontSize: 24, color: textColor),
               ),
             ),
             const SizedBox(height: 10), // Spacer
 
             // Animation 2: Scaling Text
             Transform.scale(
-              scale: _scaleFactor,
+              scale: scaleFactor,
               child: const Text(
                 'Scaling Text',
                 style: TextStyle(fontSize: 24),
@@ -93,7 +94,7 @@ class _AnimationDemoState extends State<AnimationDemo> {
 
             // Animation 3: Rotating Text
             Transform.rotate(
-              angle: _rotation * 3.14, // Convert rotation to radians
+              angle: rotation * 3.14, // Convert rotation to radians
               child: const Text(
                 'Rotating Text',
                 style: TextStyle(fontSize: 24),
@@ -103,7 +104,7 @@ class _AnimationDemoState extends State<AnimationDemo> {
 
             // Animation 4: Sliding Text
             Transform.translate(
-              offset: Offset(_translateX, 0), // Slide horizontally
+              offset: Offset(translateX, 0), // Slide horizontally
               child: const Text(
                 'Sliding Text',
                 style: TextStyle(fontSize: 24),
@@ -113,18 +114,18 @@ class _AnimationDemoState extends State<AnimationDemo> {
           children: [
             // Animation 1: Fading Text
             AnimatedOpacity(
-              opacity: _isVisible ? 1.0 : 0.0,
+              opacity: isVisible ? 1.0 : 0.0,
               duration: const Duration(seconds: 1),
               child: Text(
                 'Fading Text',
-                style: TextStyle(fontSize: 24, color: _textColor),
+                style: TextStyle(fontSize: 24, color: textColor),
               ),
             ),
             const SizedBox(height: 10), // Spacer
 
             // Animation 2: Scaling Text
             Transform.scale(
-              scale: _scaleFactor,
+              scale: scaleFactor,
               child: const Text(
                 'Scaling Text',
                 style: TextStyle(fontSize: 24),
@@ -134,7 +135,7 @@ class _AnimationDemoState extends State<AnimationDemo> {
 
             // Animation 3: Rotating Text
             Transform.rotate(
-              angle: _rotation * 3.14, // Convert rotation to radians
+              angle: rotation * 3.14, // Convert rotation to radians
               child: const Text(
                 'Rotating Text',
                 style: TextStyle(fontSize: 24),
@@ -144,7 +145,7 @@ class _AnimationDemoState extends State<AnimationDemo> {
 
             // Animation 4: Sliding Text
             Transform.translate(
-              offset: Offset(_translateX, 0), // Slide horizontally
+              offset: Offset(translateX, 0), // Slide horizontally
               child: const Text(
                 'Sliding Text',
                 style: TextStyle(fontSize: 24),

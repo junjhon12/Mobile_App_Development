@@ -10,7 +10,7 @@ void main() {
     // ChangeNotifierProvider is used for state management in the app.
     ChangeNotifierProvider(
       create: (context) => GameProvider(), // Provides the GameProvider to the widget tree.
-      child: MyApp(),
+      child: const MyApp(),
     ),
   );
 }
@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Card Matching Game', // Title of the application.
       theme: ThemeData(primarySwatch: Colors.blue), // Sets the theme color.
-      home: GameScreen(), // The home screen of the app is GameScreen.
+      home: const GameScreen(), // The home screen of the app is GameScreen.
     );
   }
 }

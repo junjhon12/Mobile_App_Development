@@ -3,7 +3,7 @@ import 'task.dart';
 
 // The main function serves as the entry point for the Flutter application
 void main() {
-  runApp(TaskManagerApp());
+  runApp(const TaskManagerApp());
 }
 
 // This widget represents the main application
@@ -12,7 +12,7 @@ class TaskManagerApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       title: 'Task Manager', // Title of the app
       home: TaskListScreen(), // Setting the home screen of the app
     );

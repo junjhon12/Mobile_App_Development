@@ -39,10 +39,10 @@ class _TrickyHalloweenGameState extends State<TrickyHalloweenGame>
   }
 
   // This function will play the background music.
-  Future<void> _playBackgroundMusic(dynamic _backgroundPlayer, dynamic LoopMode) async {
-    await _backgroundPlayer.setAsset('assets/music2.mp3');  // Load the music file.
-    _backgroundPlayer.setLoopMode(LoopMode.one);  // Loop the background music.
-    _backgroundPlayer.play();  // Start playing the music.
+  Future<void> _playBackgroundMusic(dynamic backgroundPlayer, dynamic LoopMode) async {
+    await backgroundPlayer.setAsset('assets/music2.mp3');  // Load the music file.
+    backgroundPlayer.setLoopMode(LoopMode.one);  // Loop the background music.
+    backgroundPlayer.play();  // Start playing the music.
   }
 
   // This function randomly selects one of the items as the correct one.
@@ -83,7 +83,7 @@ class _TrickyHalloweenGameState extends State<TrickyHalloweenGame>
           children: [
             // Background image for the game.
             Container(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 image: DecorationImage(
                   image: AssetImage('assets/background.jfif'),  // Replace with your background image path.
                   fit: BoxFit.cover,  // Makes the image cover the entire screen.
