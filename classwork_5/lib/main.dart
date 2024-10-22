@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
 import 'package:sqflite/sqflite.dart';
-import 'path/to/database_helper.dart';
+import 'database_helper.dart';
 
 void main() {
   runApp(MyApp());
@@ -35,10 +35,11 @@ class _AquariumScreenState extends State<AquariumScreen> with SingleTickerProvid
     _controller = AnimationController(duration: const Duration(seconds: 2), vsync: this)
       ..repeat(); // Repeats the animation indefinitely
     _controller.addListener(() {
-      setState(() {});
-      for (var fish in fishList) {
-        fish.updatePosition();
-      }
+      setState(() {
+        for (var fish in fishList) {
+          fish.updatePosition();
+        }
+      });
     });
     _loadSettings(); // Load settings when the app starts
   }
@@ -107,8 +108,8 @@ class _AquariumScreenState extends State<AquariumScreen> with SingleTickerProvid
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              width: 300,
-              height: 300,
+              width: 200,
+              height: 200,
               decoration: BoxDecoration(
                 color: Colors.lightBlueAccent,
                 border: Border.all(color: Colors.blueAccent, width: 2),
@@ -137,7 +138,7 @@ class _AquariumScreenState extends State<AquariumScreen> with SingleTickerProvid
               value: _selectedColor,
               items: [
                 DropdownMenuItem(
-                  value: Colors.orange,
+                  value: Colors.purple,
                   child: Text('Orange'),
                 ),
                 DropdownMenuItem(
