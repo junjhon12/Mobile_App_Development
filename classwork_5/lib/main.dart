@@ -48,13 +48,27 @@ class _AquariumScreenState extends State<AquariumScreen> with SingleTickerProvid
     Map<String, dynamic> settings = await _dbHelper.loadSettings();
     setState(() {
       _fishSpeed = settings['fishSpeed'];
-      _selectedColor = Color(settings['fishColor']);
+      
+      // Ensure the color is one of the predefined colors
+      int fishColorValue = settings['fishColor'];
+      Color tempColor = Color(fishColorValue);
+
+      if (tempColor == Colors.orange ||
+          tempColor == Colors.blue ||
+          tempColor == Colors.green ||
+          tempColor == Colors.red) {
+        _selectedColor = tempColor;
+      } else {
+        _selectedColor = Colors.orange; // Default color if not valid
+      }
+      
       // Add fish based on the saved count
       for (int i = 0; i < settings['fishCount']; i++) {
         fishList.add(Fish(color: _selectedColor, speed: _fishSpeed));
       }
     });
   }
+
 
   void _addFish() {
     if (fishList.length < 10) { // Limiting to a maximum of 10 fish
@@ -108,12 +122,12 @@ class _AquariumScreenState extends State<AquariumScreen> with SingleTickerProvid
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              width: 200,
-              height: 200,
+              width: 300,
+              height: 300,
               decoration: BoxDecoration(
                 color: Colors.lightBlueAccent,
                 border: Border.all(color: Colors.blueAccent, width: 2),
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(10),
               ),
               child: Stack(
                 children: fishList.map((fish) => fish.buildFish()).toList(),
@@ -138,7 +152,7 @@ class _AquariumScreenState extends State<AquariumScreen> with SingleTickerProvid
               value: _selectedColor,
               items: [
                 DropdownMenuItem(
-                  value: Colors.purple,
+                  value: Colors.orange,
                   child: Text('Orange'),
                 ),
                 DropdownMenuItem(
