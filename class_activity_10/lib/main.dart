@@ -8,6 +8,8 @@ void main() {
 }
 
 class CardOrganizerApp extends StatelessWidget {
+  const CardOrganizerApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -19,11 +21,11 @@ class CardOrganizerApp extends StatelessWidget {
 
 // Database Helper Class
 class DatabaseHelper {
-  static final _databaseName = "card_organizer.db";
-  static final _databaseVersion = 1;
+  static const _databaseName = "card_organizer.db";
+  static const _databaseVersion = 1;
 
-  static final tableFolders = 'folders';
-  static final tableCards = 'cards';
+  static const tableFolders = 'folders';
+  static const tableCards = 'cards';
 
   DatabaseHelper._privateConstructor();
   static final DatabaseHelper instance = DatabaseHelper._privateConstructor();
@@ -131,14 +133,16 @@ class DatabaseHelper {
 
 // Folder Screen
 class FolderScreen extends StatelessWidget {
+  const FolderScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Folders'),
+        title: const Text('Folders'),
         actions: [
           IconButton(
-            icon: Icon(Icons.add),
+            icon: const Icon(Icons.add),
             onPressed: () async {
               // Code to add a custom folder
               await _addCustomFolder(context);
@@ -150,7 +154,7 @@ class FolderScreen extends StatelessWidget {
         future: DatabaseHelper.instance.fetchFolders(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasData) {
             var folders = snapshot.data as List<Map<String, dynamic>>;
             return ListView.builder(
@@ -163,7 +167,7 @@ class FolderScreen extends StatelessWidget {
                     future: DatabaseHelper.instance.countCardsInFolder(folder['id']),
                     builder: (context, cardCountSnapshot) {
                       if (cardCountSnapshot.connectionState == ConnectionState.waiting) {
-                        return Text('Loading...');
+                        return const Text('Loading...');
                       }
                       return Text('${cardCountSnapshot.data} cards');
                     },
@@ -177,7 +181,7 @@ class FolderScreen extends StatelessWidget {
                     );
                   },
                   trailing: IconButton(
-                    icon: Icon(Icons.delete),
+                    icon: const Icon(Icons.delete),
                     onPressed: () async {
                       await DatabaseHelper.instance.deleteFolder(folder['id']);
                       // Refresh the screen
@@ -188,7 +192,7 @@ class FolderScreen extends StatelessWidget {
               },
             );
           }
-          return Center(child: Text('No Folders'));
+          return const Center(child: Text('No Folders'));
         },
       ),
     );
@@ -200,10 +204,10 @@ class FolderScreen extends StatelessWidget {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Add Custom Folder'),
+          title: const Text('Add Custom Folder'),
           content: TextField(
             controller: folderNameController,
-            decoration: InputDecoration(labelText: 'Folder Name'),
+            decoration: const InputDecoration(labelText: 'Folder Name'),
           ),
           actions: [
             TextButton(
@@ -215,11 +219,11 @@ class FolderScreen extends StatelessWidget {
                   (context as Element).reassemble();
                 }
               },
-              child: Text('Add'),
+              child: const Text('Add'),
             ),
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
             ),
           ],
         );
@@ -232,7 +236,7 @@ class FolderScreen extends StatelessWidget {
 class CardScreen extends StatefulWidget {
   final int folderId;
 
-  CardScreen({required this.folderId});
+  const CardScreen({super.key, required this.folderId});
 
   @override
   _CardScreenState createState() => _CardScreenState();
@@ -251,10 +255,10 @@ class _CardScreenState extends State<CardScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Cards'),
+        title: const Text('Cards'),
         actions: [
           IconButton(
-            icon: Icon(Icons.add),
+            icon: const Icon(Icons.add),
             onPressed: () {
               _addCard(context);
             },
@@ -265,16 +269,16 @@ class _CardScreenState extends State<CardScreen> {
         future: cards,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(child: Text('No Cards in this Folder'));
+            return const Center(child: Text('No Cards in this Folder'));
           }
 
           var cardList = snapshot.data!;
           return GridView.builder(
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
             ),
             itemCount: cardList.length,
@@ -290,7 +294,7 @@ class _CardScreenState extends State<CardScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         IconButton(
-                          icon: Icon(Icons.delete),
+                          icon: const Icon(Icons.delete),
                           onPressed: () async {
                             await DatabaseHelper.instance.removeCardFromFolder(card['id']);
                             setState(() {
@@ -300,7 +304,7 @@ class _CardScreenState extends State<CardScreen> {
                           },
                         ),
                         IconButton(
-                          icon: Icon(Icons.edit),
+                          icon: const Icon(Icons.edit),
                           onPressed: () async {
                             await _updateCard(context, card);
                           },
@@ -326,21 +330,21 @@ class _CardScreenState extends State<CardScreen> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Add Card'),
+          title: const Text('Add Card'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               TextField(
                 controller: cardNameController,
-                decoration: InputDecoration(labelText: 'Card Name'),
+                decoration: const InputDecoration(labelText: 'Card Name'),
               ),
               TextField(
                 controller: cardSuitController,
-                decoration: InputDecoration(labelText: 'Card Suit'),
+                decoration: const InputDecoration(labelText: 'Card Suit'),
               ),
               TextField(
                 controller: cardImageUrlController,
-                decoration: InputDecoration(labelText: 'Image URL'),
+                decoration: const InputDecoration(labelText: 'Image URL'),
               ),
             ],
           ),
@@ -360,11 +364,11 @@ class _CardScreenState extends State<CardScreen> {
                   Navigator.of(context).pop(); // Close the dialog
                 }
               },
-              child: Text('Add'),
+              child: const Text('Add'),
             ),
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
             ),
           ],
         );
@@ -381,21 +385,21 @@ class _CardScreenState extends State<CardScreen> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Update Card'),
+          title: const Text('Update Card'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               TextField(
                 controller: cardNameController,
-                decoration: InputDecoration(labelText: 'Card Name'),
+                decoration: const InputDecoration(labelText: 'Card Name'),
               ),
               TextField(
                 controller: cardSuitController,
-                decoration: InputDecoration(labelText: 'Card Suit'),
+                decoration: const InputDecoration(labelText: 'Card Suit'),
               ),
               TextField(
                 controller: cardImageUrlController,
-                decoration: InputDecoration(labelText: 'Image URL'),
+                decoration: const InputDecoration(labelText: 'Image URL'),
               ),
             ],
           ),
@@ -415,11 +419,11 @@ class _CardScreenState extends State<CardScreen> {
                   Navigator.of(context).pop(); // Close the dialog
                 }
               },
-              child: Text('Update'),
+              child: const Text('Update'),
             ),
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
             ),
           ],
         );
