@@ -130,32 +130,67 @@ class HomePage extends StatelessWidget {
 }
 
 // Separate Widget for Bottom Navigation Bar
-class BottomNavigationBarSection extends StatelessWidget {
+class BottomNavigationBarSection extends StatefulWidget {
+  @override
+  _BottomNavigationBarSectionState createState() => _BottomNavigationBarSectionState();
+}
+
+class _BottomNavigationBarSectionState extends State<BottomNavigationBarSection> {
+  int _currentIndex = 3; // Default to 'Home' tab
+
+  final List<Color> _backgroundColors = [
+    Colors.redAccent,     // Income
+    Colors.amberAccent,   // Savings
+    Colors.orangeAccent,  // Expenses
+    Colors.greenAccent,   // Investments
+  ];
+
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
+      currentIndex: _currentIndex,
+      onTap: (index) {
+        setState(() {
+          _currentIndex = index;
+        });
+      },
       type: BottomNavigationBarType.fixed,
       selectedItemColor: Colors.white,
       unselectedItemColor: Colors.black54,
-      backgroundColor: Colors.green,
+      backgroundColor: Colors.white, // Keep background of the nav bar white
       items: [
         BottomNavigationBarItem(
-          icon: Icon(Icons.attach_money),
-          label: 'Transactions',
+          icon: _buildNavIcon(Icons.attach_money, _backgroundColors[0], _currentIndex == 0),
+          label: 'Income',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.savings),
+          icon: _buildNavIcon(Icons.savings, _backgroundColors[1], _currentIndex == 1),
           label: 'Savings',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.show_chart),
-          label: 'Investments',
+          icon: _buildNavIcon(Icons.account_balance_wallet, _backgroundColors[2], _currentIndex == 2),
+          label: 'Expenses',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.home),
-          label: 'Home',
+          icon: _buildNavIcon(Icons.show_chart, _backgroundColors[3], _currentIndex == 3),
+          label: 'Investments',
         ),
       ],
+    );
+  }
+
+  // Function to build icon with colored background
+  Widget _buildNavIcon(IconData icon, Color bgColor, bool isSelected) {
+    return Container(
+      padding: EdgeInsets.all(8.0),
+      decoration: BoxDecoration(
+        color: isSelected ? bgColor : Colors.transparent, // Background color if selected
+        shape: BoxShape.circle, // Circular background for the icon
+      ),
+      child: Icon(
+        icon,
+        color: isSelected ? Colors.white : Colors.black54, // Icon color based on selection
+      ),
     );
   }
 }
