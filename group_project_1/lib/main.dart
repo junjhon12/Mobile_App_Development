@@ -102,13 +102,60 @@ class HomePage extends StatelessWidget {
           ),
 
           // Bottom Navigation Bar (auto height)
-          BottomNavigationBarSection(),
+          BottomNavigationBar(
+            currentIndex: 3,  // Home tab by default
+            onTap: (index) {
+              if (index == 0) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => IncomePage()),
+                );
+              } else if (index == 1) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => SavingsPage()),
+                );
+              } else if (index == 2) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ExpensesPage()),
+                );
+              } else if (index == 3) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => InvestmentPage()),
+                );
+              }
+            },
+            type: BottomNavigationBarType.fixed,
+            selectedItemColor: Colors.white,
+            unselectedItemColor: Colors.black54,
+            backgroundColor: Colors.white, // Keep background of the nav bar white
+            items: [
+              BottomNavigationBarItem(
+                icon: _buildNavIcon(Icons.attach_money, Colors.redAccent, false),
+                label: 'Income',
+              ),
+              BottomNavigationBarItem(
+                icon: _buildNavIcon(Icons.savings, Colors.amberAccent, false),
+                label: 'Savings',
+              ),
+              BottomNavigationBarItem(
+                icon: _buildNavIcon(Icons.account_balance_wallet, Colors.orangeAccent, false),
+                label: 'Expenses',
+              ),
+              BottomNavigationBarItem(
+                icon: _buildNavIcon(Icons.show_chart, Colors.greenAccent, true),
+                label: 'Investments',
+              ),
+            ],
+          ),
         ],
       ),
     );
   }
 
-  // Function to build the cards
+  // Function to build the cards in the middle section
   Widget _buildCard(String title, Color color) {
     return Container(
       decoration: BoxDecoration(
@@ -125,57 +172,6 @@ class HomePage extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-}
-
-// Separate Widget for Bottom Navigation Bar
-class BottomNavigationBarSection extends StatefulWidget {
-  @override
-  _BottomNavigationBarSectionState createState() => _BottomNavigationBarSectionState();
-}
-
-class _BottomNavigationBarSectionState extends State<BottomNavigationBarSection> {
-  int _currentIndex = 3; // Default to 'Home' tab
-
-  final List<Color> _backgroundColors = [
-    Colors.redAccent,     // Income
-    Colors.amberAccent,   // Savings
-    Colors.orangeAccent,  // Expenses
-    Colors.greenAccent,   // Investments
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    return BottomNavigationBar(
-      currentIndex: _currentIndex,
-      onTap: (index) {
-        setState(() {
-          _currentIndex = index;
-        });
-      },
-      type: BottomNavigationBarType.fixed,
-      selectedItemColor: Colors.white,
-      unselectedItemColor: Colors.black54,
-      backgroundColor: Colors.white, // Keep background of the nav bar white
-      items: [
-        BottomNavigationBarItem(
-          icon: _buildNavIcon(Icons.attach_money, _backgroundColors[0], _currentIndex == 0),
-          label: 'Income',
-        ),
-        BottomNavigationBarItem(
-          icon: _buildNavIcon(Icons.savings, _backgroundColors[1], _currentIndex == 1),
-          label: 'Savings',
-        ),
-        BottomNavigationBarItem(
-          icon: _buildNavIcon(Icons.account_balance_wallet, _backgroundColors[2], _currentIndex == 2),
-          label: 'Expenses',
-        ),
-        BottomNavigationBarItem(
-          icon: _buildNavIcon(Icons.show_chart, _backgroundColors[3], _currentIndex == 3),
-          label: 'Investments',
-        ),
-      ],
     );
   }
 

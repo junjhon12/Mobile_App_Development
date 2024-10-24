@@ -1,21 +1,27 @@
 import 'package:flutter/material.dart';
+import 'income_page.dart';
+import 'saving_page.dart';
+import 'expenses_page.dart';
+import 'investment_page.dart';
 
 class SavingsPage extends StatelessWidget {
+  const SavingsPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Savings'),
+        title: const Text('Savings'),
         centerTitle: true,
       ),
       body: Column(
         children: [
           // Top Section for Total Savings Balance
           Container(
-            color: Colors.redAccent,
+            color: Colors.amberAccent,
             width: double.infinity,
-            padding: EdgeInsets.all(16.0),
-            child: Center(
+            padding: const EdgeInsets.all(16.0),
+            child: const Center(
               child: Text(
                 '\$2000.00',
                 style: TextStyle(fontSize: 36, fontWeight: FontWeight.bold),
@@ -23,7 +29,7 @@ class SavingsPage extends StatelessWidget {
             ),
           ),
           
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
 
           // Savings List (Similar to the Transaction List)
           Expanded(
@@ -43,29 +49,53 @@ class SavingsPage extends StatelessWidget {
           ),
         ],
       ),
-      
+
       // Bottom Navigation Bar
       bottomNavigationBar: BottomNavigationBar(
+        currentIndex: 1, // Highlight the Savings tab
+        onTap: (index) {
+          if (index == 0) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const IncomePage()),
+            );
+          } else if (index == 1) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const SavingsPage()),
+            );
+          } else if (index == 2) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const ExpensesPage()),
+            );
+          } else if (index == 3) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const InvestmentPage()),
+            );
+          }
+        },
         type: BottomNavigationBarType.fixed,
         selectedItemColor: Colors.white,
         unselectedItemColor: Colors.black54,
-        backgroundColor: Colors.redAccent,
-        items: [
+        backgroundColor: Colors.white,
+        items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.attach_money),
-            label: 'Transactions',
+            label: 'Income',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.savings),
             label: 'Savings',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.show_chart),
-            label: 'Investments',
+            icon: Icon(Icons.account_balance_wallet),
+            label: 'Expenses',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
+            icon: Icon(Icons.show_chart),
+            label: 'Investments',
           ),
         ],
       ),
@@ -75,8 +105,8 @@ class SavingsPage extends StatelessWidget {
   // Function to Build Savings Item Row
   Widget _buildSavingsItem(String title, double amount, bool isPositive) {
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 8.0),
-      padding: EdgeInsets.all(8.0),
+      margin: const EdgeInsets.symmetric(vertical: 8.0),
+      padding: const EdgeInsets.all(8.0),
       decoration: BoxDecoration(
         color: Colors.grey[200],
         borderRadius: BorderRadius.circular(8.0),
@@ -87,14 +117,14 @@ class SavingsPage extends StatelessWidget {
           Expanded(
             child: Text(
               title,
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
             ),
           ),
           Text(
             '\$$amount',
-            style: TextStyle(fontSize: 16),
+            style: const TextStyle(fontSize: 16),
           ),
-          SizedBox(width: 10),
+          const SizedBox(width: 10),
           IconButton(
             onPressed: () {
               // Add your action for "+" or "-" button here

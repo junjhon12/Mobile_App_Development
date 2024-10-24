@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
+import 'income_page.dart';
+import 'saving_page.dart';
+import 'investment_page.dart';
+import 'expenses_page.dart'; // Ensure all necessary pages are imported
 
 class ExpensesPage extends StatelessWidget {
+  const ExpensesPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Expenses'),
+        title: const Text('Expenses'),
         centerTitle: true,
       ),
       body: Column(
@@ -14,15 +20,19 @@ class ExpensesPage extends StatelessWidget {
           Container(
             color: Colors.orangeAccent,
             width: double.infinity,
-            padding: EdgeInsets.all(16.0),
-            child: Center(
+            padding: const EdgeInsets.all(16.0),
+            child: const Center(
               child: Text(
                 '\$800.00', // Example expenses value
-                style: TextStyle(fontSize: 36, fontWeight: FontWeight.bold, color: Colors.white),
+                style: TextStyle(
+                  fontSize: 36, 
+                  fontWeight: FontWeight.bold, 
+                  color: Colors.white
+                ),
               ),
             ),
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
 
           // List of expense entries
           Expanded(
@@ -34,6 +44,56 @@ class ExpensesPage extends StatelessWidget {
                 // Add more expense entries here
               ],
             ),
+          ),
+        ],
+      ),
+
+      // Bottom Navigation Bar moved here, inside the Scaffold
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: 2, // Highlight the Expenses tab
+        onTap: (index) {
+          if (index == 0) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const IncomePage()),
+            );
+          } else if (index == 1) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const SavingsPage()),
+            );
+          } else if (index == 2) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const ExpensesPage()),
+            );
+          } else if (index == 3) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const InvestmentPage()),
+            );
+          }
+        },
+        type: BottomNavigationBarType.fixed,
+        selectedItemColor: Colors.white,
+        unselectedItemColor: Colors.black54,
+        backgroundColor: Colors.white,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.attach_money),
+            label: 'Income',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.savings),
+            label: 'Savings',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.account_balance_wallet),
+            label: 'Expenses',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.show_chart),
+            label: 'Investments',
           ),
         ],
       ),
@@ -53,15 +113,15 @@ class ExpensesPage extends StatelessWidget {
               color: Colors.grey.withOpacity(0.5),
               spreadRadius: 2,
               blurRadius: 5,
-              offset: Offset(0, 3),
+              offset: const Offset(0, 3),
             ),
           ],
         ),
         child: ListTile(
-          title: Text(category, style: TextStyle(fontSize: 18)),
+          title: Text(category, style: const TextStyle(fontSize: 18)),
           trailing: Text(
             '\$$amount',
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
               color: Colors.black,
