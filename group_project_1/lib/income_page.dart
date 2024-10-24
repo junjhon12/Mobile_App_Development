@@ -23,7 +23,7 @@ class IncomePage extends StatelessWidget {
             padding: const EdgeInsets.all(16.0),
             child: const Center(
               child: Text(
-                '\$2000.00', // Example income value
+                '\$0.00', // Example income value
                 style: TextStyle(fontSize: 36, fontWeight: FontWeight.bold, color: Colors.white),
               ),
             ),

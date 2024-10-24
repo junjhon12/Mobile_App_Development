@@ -42,7 +42,7 @@ class HomePage extends StatelessWidget {
                 padding: EdgeInsets.all(16.0),
                 child: Center(
                   child: Text(
-                    '\$1000.00',
+                    '\$0.00',
                     style: TextStyle(fontSize: 36, fontWeight: FontWeight.bold),
                   ),
                 ),

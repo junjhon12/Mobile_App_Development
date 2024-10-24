@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'income_page.dart';
 import 'saving_page.dart';
 import 'investment_page.dart';
-import 'expenses_page.dart'; // Ensure all necessary pages are imported
 
 class ExpensesPage extends StatelessWidget {
   const ExpensesPage({super.key});
@@ -23,7 +22,7 @@ class ExpensesPage extends StatelessWidget {
             padding: const EdgeInsets.all(16.0),
             child: const Center(
               child: Text(
-                '\$800.00', // Example expenses value
+                '\$0.00', // Example expenses value
                 style: TextStyle(
                   fontSize: 36, 
                   fontWeight: FontWeight.bold, 
