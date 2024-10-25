@@ -53,7 +53,6 @@ class HomePage extends StatelessWidget {
               ),
             ),
           ),
-
           // Middle Section for Details (45% height)
           Expanded(
             flex: 4.5.toInt(), // 45% of the height
@@ -104,8 +103,6 @@ class HomePage extends StatelessWidget {
               ),
             ),
           ),
-
-          // Bottom Navigation Bar (auto height)
           BottomNavigationBar(
             currentIndex: 3,  // Home tab by default
             onTap: (index) {
@@ -159,7 +156,6 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  // Function to build the cards in the middle section
   Widget _buildCard(String title, Color color) {
     return Container(
       decoration: BoxDecoration(
@@ -179,7 +175,6 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  // Function to build icon with colored background
   Widget _buildNavIcon(IconData icon, Color bgColor, bool isSelected) {
     return Container(
       padding: const EdgeInsets.all(8.0),
