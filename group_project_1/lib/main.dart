@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'saving_page.dart';
 import 'expenses_page.dart';
 import 'income_page.dart';
 import 'investment_page.dart';
 
 void main() {
-  runApp(PersonalFinanceApp());
+  runApp(const PersonalFinanceApp());
 }
 
 class PersonalFinanceApp extends StatelessWidget {
@@ -18,13 +19,33 @@ class PersonalFinanceApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.green,
       ),
-      home: HomePage(),
+      home: const HomePage(),
     );
   }
 }
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  double totalIncome = 0.0;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadTotalIncome();
+  }
+
+  Future<void> _loadTotalIncome() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      totalIncome = prefs.getDouble('totalIncome') ?? 0.0;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,17 +58,17 @@ class HomePage extends StatelessWidget {
         children: [
           // Top Section for Total Balance (40% height)
           Expanded(
-            flex: 3, // 40% of the height
+            flex: 3,
             child: Padding(
-              padding: const EdgeInsets.only(bottom: 16.0), // Adding bottom padding similar to the middle section
+              padding: const EdgeInsets.only(bottom: 16.0),
               child: Container(
                 color: Colors.lightGreen,
                 width: double.infinity,
                 padding: const EdgeInsets.all(16.0),
-                child: const Center(
+                child: Center(
                   child: Text(
-                    '\$0.00',
-                    style: TextStyle(fontSize: 36, fontWeight: FontWeight.bold),
+                    '\$$totalIncome',
+                    style: const TextStyle(fontSize: 36, fontWeight: FontWeight.bold),
                   ),
                 ),
               ),
@@ -55,7 +76,7 @@ class HomePage extends StatelessWidget {
           ),
           // Middle Section for Details (45% height)
           Expanded(
-            flex: 4.5.toInt(), // 45% of the height
+            flex: 4,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: GridView.count(
@@ -68,7 +89,7 @@ class HomePage extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => const IncomePage()),
-                      );
+                      ).then((_) => _loadTotalIncome());
                     },
                     child: _buildCard('Income', Colors.redAccent),
                   ),
@@ -104,34 +125,23 @@ class HomePage extends StatelessWidget {
             ),
           ),
           BottomNavigationBar(
-            currentIndex: 3,  // Home tab by default
+            currentIndex: 3,
             onTap: (index) {
               if (index == 0) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const IncomePage()),
-                );
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const IncomePage()))
+                    .then((_) => _loadTotalIncome());
               } else if (index == 1) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const SavingsPage()),
-                );
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const SavingsPage()));
               } else if (index == 2) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const ExpensesPage()),
-                );
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const ExpensesPage()));
               } else if (index == 3) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const InvestmentPage()),
-                );
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const InvestmentPage()));
               }
             },
             type: BottomNavigationBarType.fixed,
             selectedItemColor: Colors.white,
             unselectedItemColor: Colors.black54,
-            backgroundColor: Colors.white, // Keep background of the nav bar white
+            backgroundColor: Colors.white,
             items: [
               BottomNavigationBarItem(
                 icon: _buildNavIcon(Icons.attach_money, Colors.redAccent, false),
@@ -165,11 +175,7 @@ class HomePage extends StatelessWidget {
       child: Center(
         child: Text(
           title,
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
         ),
       ),
     );
@@ -179,12 +185,12 @@ class HomePage extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(8.0),
       decoration: BoxDecoration(
-        color: isSelected ? bgColor : Colors.transparent, // Background color if selected
-        shape: BoxShape.circle, // Circular background for the icon
+        color: isSelected ? bgColor : Colors.transparent,
+        shape: BoxShape.circle,
       ),
       child: Icon(
         icon,
-        color: isSelected ? Colors.white : Colors.black54, // Icon color based on selection
+        color: isSelected ? Colors.white : Colors.black54,
       ),
     );
   }
