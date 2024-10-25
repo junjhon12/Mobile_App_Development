@@ -9,6 +9,8 @@ void main() {
 }
 
 class PersonalFinanceApp extends StatelessWidget {
+  const PersonalFinanceApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -22,11 +24,13 @@ class PersonalFinanceApp extends StatelessWidget {
 }
 
 class HomePage extends StatelessWidget {
+  const HomePage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Personal Finance Manager'),
+        title: const Text('Personal Finance Manager'),
         centerTitle: true,
       ),
       body: Column(
@@ -39,8 +43,8 @@ class HomePage extends StatelessWidget {
               child: Container(
                 color: Colors.lightGreen,
                 width: double.infinity,
-                padding: EdgeInsets.all(16.0),
-                child: Center(
+                padding: const EdgeInsets.all(16.0),
+                child: const Center(
                   child: Text(
                     '\$0.00',
                     style: TextStyle(fontSize: 36, fontWeight: FontWeight.bold),
@@ -64,7 +68,7 @@ class HomePage extends StatelessWidget {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => IncomePage()),
+                        MaterialPageRoute(builder: (context) => const IncomePage()),
                       );
                     },
                     child: _buildCard('Income', Colors.redAccent),
@@ -73,7 +77,7 @@ class HomePage extends StatelessWidget {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => SavingsPage()),
+                        MaterialPageRoute(builder: (context) => const SavingsPage()),
                       );
                     },
                     child: _buildCard('Savings', Colors.amberAccent),
@@ -82,7 +86,7 @@ class HomePage extends StatelessWidget {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => ExpensesPage()),
+                        MaterialPageRoute(builder: (context) => const ExpensesPage()),
                       );
                     },
                     child: _buildCard('Expenses', Colors.orangeAccent),
@@ -91,7 +95,7 @@ class HomePage extends StatelessWidget {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => InvestmentPage()),
+                        MaterialPageRoute(builder: (context) => const InvestmentPage()),
                       );
                     },
                     child: _buildCard('Investments', Colors.greenAccent),
@@ -108,22 +112,22 @@ class HomePage extends StatelessWidget {
               if (index == 0) {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => IncomePage()),
+                  MaterialPageRoute(builder: (context) => const IncomePage()),
                 );
               } else if (index == 1) {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => SavingsPage()),
+                  MaterialPageRoute(builder: (context) => const SavingsPage()),
                 );
               } else if (index == 2) {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => ExpensesPage()),
+                  MaterialPageRoute(builder: (context) => const ExpensesPage()),
                 );
               } else if (index == 3) {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => InvestmentPage()),
+                  MaterialPageRoute(builder: (context) => const InvestmentPage()),
                 );
               }
             },
@@ -165,7 +169,7 @@ class HomePage extends StatelessWidget {
       child: Center(
         child: Text(
           title,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
             color: Colors.white,
@@ -178,7 +182,7 @@ class HomePage extends StatelessWidget {
   // Function to build icon with colored background
   Widget _buildNavIcon(IconData icon, Color bgColor, bool isSelected) {
     return Container(
-      padding: EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(8.0),
       decoration: BoxDecoration(
         color: isSelected ? bgColor : Colors.transparent, // Background color if selected
         shape: BoxShape.circle, // Circular background for the icon

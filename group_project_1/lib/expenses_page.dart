@@ -3,8 +3,34 @@ import 'income_page.dart';
 import 'saving_page.dart';
 import 'investment_page.dart';
 
-class ExpensesPage extends StatelessWidget {
+class ExpensesPage extends StatefulWidget {
   const ExpensesPage({super.key});
+
+  @override
+  _ExpensesPageState createState() => _ExpensesPageState();
+}
+
+class _ExpensesPageState extends State<ExpensesPage> {
+  double totalExpenses = 0.00; // Starting total expenses
+  final TextEditingController _amountController = TextEditingController();
+
+  // Function to add an expense
+  void _addExpense() {
+    setState(() {
+      double amount = double.tryParse(_amountController.text) ?? 0;
+      totalExpenses += amount;
+    });
+    _amountController.clear(); // Clear the input field after updating
+  }
+
+  // Function to remove an expense
+  void _removeExpense() {
+    setState(() {
+      double amount = double.tryParse(_amountController.text) ?? 0;
+      totalExpenses -= amount;
+    });
+    _amountController.clear(); // Clear the input field after updating
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,15 +46,73 @@ class ExpensesPage extends StatelessWidget {
             color: Colors.orangeAccent,
             width: double.infinity,
             padding: const EdgeInsets.all(16.0),
-            child: const Center(
+            child: Center(
               child: Text(
-                '\$0.00', // Example expenses value
-                style: TextStyle(
-                  fontSize: 36, 
-                  fontWeight: FontWeight.bold, 
-                  color: Colors.white
+                '\$$totalExpenses', // Dynamically display the updated total expenses
+                style: const TextStyle(
+                  fontSize: 36,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
                 ),
               ),
+            ),
+          ),
+          const SizedBox(height: 16),
+
+          // Form Section for Adding or Removing Expenses
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Column(
+              children: [
+                // Input field for amount
+                TextField(
+                  controller: _amountController,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    labelText: 'Enter Amount',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                // Buttons for adding or removing expenses
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    // Button for adding expense
+                    GestureDetector(
+                      onTap: _addExpense,
+                      child: Container(
+                        padding: const EdgeInsets.all(16.0),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[200],
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        child: const Icon(
+                          Icons.add_circle,
+                          color: Colors.green,
+                          size: 36,
+                        ),
+                      ),
+                    ),
+                    // Button for removing expense
+                    GestureDetector(
+                      onTap: _removeExpense,
+                      child: Container(
+                        padding: const EdgeInsets.all(16.0),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[200],
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        child: const Icon(
+                          Icons.remove_circle,
+                          color: Colors.red,
+                          size: 36,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
           const SizedBox(height: 16),
@@ -47,7 +131,7 @@ class ExpensesPage extends StatelessWidget {
         ],
       ),
 
-      // Bottom Navigation Bar moved here, inside the Scaffold
+      // Bottom Navigation Bar
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: 2, // Highlight the Expenses tab
         onTap: (index) {

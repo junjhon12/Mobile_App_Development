@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'income_page.dart';
+import 'expenses_page.dart';
+import 'investment_page.dart';
 
 class SavingsPage extends StatefulWidget {
   const SavingsPage({super.key});
@@ -8,29 +11,37 @@ class SavingsPage extends StatefulWidget {
 }
 
 class _SavingsPageState extends State<SavingsPage> {
-  double totalBalance = 2000.00; // Starting balance
+  double currentSavings = 2000.00; // Current savings
+  double savingsGoal = 5000.00; // User's savings goal
   final TextEditingController _amountController = TextEditingController();
 
-  // Function to add income
-  void _addIncome() {
+  // Function to add savings
+  void _addSavings() {
     setState(() {
       double amount = double.tryParse(_amountController.text) ?? 0;
-      totalBalance += amount;
+      currentSavings += amount;
     });
     _amountController.clear(); // Clear the input field after updating
   }
 
-  // Function to add expense
-  void _addExpense() {
+  // Function to remove savings
+  void _removeSavings() {
     setState(() {
       double amount = double.tryParse(_amountController.text) ?? 0;
-      totalBalance -= amount;
+      currentSavings -= amount;
     });
     _amountController.clear(); // Clear the input field after updating
+  }
+
+  // Function to calculate the progress percentage toward the savings goal
+  double _calculateProgress() {
+    return currentSavings / savingsGoal;
   }
 
   @override
   Widget build(BuildContext context) {
+    double progress = _calculateProgress(); // Calculate progress as a fraction (0 to 1)
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Savings'),
@@ -38,21 +49,84 @@ class _SavingsPageState extends State<SavingsPage> {
       ),
       body: Column(
         children: [
-          // Top Section for Total Savings Balance
+          // Top Section: Display current savings and savings goal
           Container(
             color: Colors.amberAccent,
-            width: double.infinity,
             padding: const EdgeInsets.all(16.0),
-            child: Center(
-              child: Text(
-                '\$$totalBalance', // Dynamically display the updated balance
-                style: const TextStyle(fontSize: 36, fontWeight: FontWeight.bold),
-              ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                // Current savings
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Current Savings',
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                    ),
+                    Text(
+                      '\$$currentSavings',
+                      style: const TextStyle(
+                        fontSize: 36,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+                // Savings goal
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    const Text(
+                      'Savings Goal',
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                    ),
+                    Text(
+                      '\$$savingsGoal',
+                      style: const TextStyle(
+                        fontSize: 36,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
+
           const SizedBox(height: 16),
 
-          // Form Section for Adding Income or Expense
+          // Progress bar showing how far the user is from the goal
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Column(
+              children: [
+                // Show progress bar
+                LinearProgressIndicator(
+                  value: progress.clamp(0.0, 1.0), // Clamp between 0 and 1
+                  minHeight: 10,
+                  backgroundColor: Colors.grey[300],
+                  color: progress >= 1.0 ? Colors.green : Colors.blueAccent,
+                ),
+                const SizedBox(height: 8),
+                // Show how far the user is from their goal
+                Text(
+                  progress >= 1.0
+                      ? 'Goal Reached! 🎉'
+                      : '${(progress * 100).toStringAsFixed(1)}% of your goal reached',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: progress >= 1.0 ? Colors.green : Colors.black,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 16),
+
+          // Form Section for Adding or Removing Savings
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Column(
@@ -67,17 +141,17 @@ class _SavingsPageState extends State<SavingsPage> {
                   ),
                 ),
                 const SizedBox(height: 16),
-                // Buttons for adding income or expense
+                // Buttons for adding or removing savings
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    // Button for adding income
+                    // Button for adding savings
                     GestureDetector(
-                      onTap: _addIncome,
+                      onTap: _addSavings,
                       child: Container(
                         padding: const EdgeInsets.all(16.0),
                         decoration: BoxDecoration(
-                          color: Colors.grey[200], // Matching background color
+                          color: Colors.grey[200],
                           borderRadius: BorderRadius.circular(8.0),
                         ),
                         child: const Icon(
@@ -87,13 +161,13 @@ class _SavingsPageState extends State<SavingsPage> {
                         ),
                       ),
                     ),
-                    // Button for adding expense
+                    // Button for removing savings
                     GestureDetector(
-                      onTap: _addExpense,
+                      onTap: _removeSavings,
                       child: Container(
                         padding: const EdgeInsets.all(16.0),
                         decoration: BoxDecoration(
-                          color: Colors.grey[200], // Matching background color
+                          color: Colors.grey[200],
                           borderRadius: BorderRadius.circular(8.0),
                         ),
                         child: const Icon(
@@ -116,24 +190,41 @@ class _SavingsPageState extends State<SavingsPage> {
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: ListView(
                 children: [
-                  _buildSavingsItem('Sesame Str.', 50.00, true),
-                  _buildSavingsItem('Yellow Not Bird', 50.00, false),
-                  _buildSavingsItem('Red Sketch Elmo', 20.00, true),
-                  _buildSavingsItem('Not suspicious', 165.00, true),
-                  _buildSavingsItem('Money Laundry', 50.00, true),
-                  _buildSavingsItem('Legal Cash', 50.00, false),
+                  _buildSavingsItem('Emergency Fund', 500.00, true),
+                  _buildSavingsItem('Vacation Fund', 300.00, false),
+                  // Add more savings items here
                 ],
               ),
             ),
           ),
         ],
       ),
-      
-      // Bottom Navigation Bar
+
+      // Bottom Navigation Bar for page navigation
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: 1, // Highlight the Savings tab
         onTap: (index) {
-          // Navigation logic (similar to the previous implementation)
+          if (index == 0) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const IncomePage()),
+            );
+          } else if (index == 1) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const SavingsPage()),
+            );
+          } else if (index == 2) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const ExpensesPage()),
+            );
+          } else if (index == 3) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const InvestmentPage()),
+            );
+          }
         },
         type: BottomNavigationBarType.fixed,
         selectedItemColor: Colors.white,

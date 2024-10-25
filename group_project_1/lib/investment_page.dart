@@ -2,10 +2,35 @@ import 'package:flutter/material.dart';
 import 'income_page.dart';
 import 'saving_page.dart';
 import 'expenses_page.dart';
-import 'investment_page.dart';
 
-class InvestmentPage extends StatelessWidget {
+class InvestmentPage extends StatefulWidget {
   const InvestmentPage({super.key});
+
+  @override
+  _InvestmentPageState createState() => _InvestmentPageState();
+}
+
+class _InvestmentPageState extends State<InvestmentPage> {
+  double totalInvestments = 0.00; // Starting total investments
+  final TextEditingController _amountController = TextEditingController();
+
+  // Function to add an investment
+  void _addInvestment() {
+    setState(() {
+      double amount = double.tryParse(_amountController.text) ?? 0;
+      totalInvestments += amount;
+    });
+    _amountController.clear(); // Clear the input field after updating
+  }
+
+  // Function to remove an investment
+  void _removeInvestment() {
+    setState(() {
+      double amount = double.tryParse(_amountController.text) ?? 0;
+      totalInvestments -= amount;
+    });
+    _amountController.clear(); // Clear the input field after updating
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,11 +46,69 @@ class InvestmentPage extends StatelessWidget {
             color: Colors.greenAccent,
             width: double.infinity,
             padding: const EdgeInsets.all(16.0),
-            child: const Center(
+            child: Center(
               child: Text(
-                '\$0.00', // Example investments value
-                style: TextStyle(fontSize: 36, fontWeight: FontWeight.bold, color: Colors.white),
+                '\$$totalInvestments', // Dynamically display the updated total investments
+                style: const TextStyle(fontSize: 36, fontWeight: FontWeight.bold, color: Colors.white),
               ),
+            ),
+          ),
+          const SizedBox(height: 16),
+
+          // Form Section for Adding or Removing Investments
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Column(
+              children: [
+                // Input field for amount
+                TextField(
+                  controller: _amountController,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    labelText: 'Enter Amount',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                // Buttons for adding or removing investments
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    // Button for adding investment
+                    GestureDetector(
+                      onTap: _addInvestment,
+                      child: Container(
+                        padding: const EdgeInsets.all(16.0),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[200],
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        child: const Icon(
+                          Icons.add_circle,
+                          color: Colors.green,
+                          size: 36,
+                        ),
+                      ),
+                    ),
+                    // Button for removing investment
+                    GestureDetector(
+                      onTap: _removeInvestment,
+                      child: Container(
+                        padding: const EdgeInsets.all(16.0),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[200],
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        child: const Icon(
+                          Icons.remove_circle,
+                          color: Colors.red,
+                          size: 36,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
           const SizedBox(height: 16),
