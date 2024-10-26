@@ -169,7 +169,6 @@ class _HomePageState extends State<HomePage> {
   Widget _buildCard(String title, Color color) {
     return Container(
       decoration: BoxDecoration(
-        color: color,
         borderRadius: BorderRadius.circular(8.0),
       ),
       child: Center(
