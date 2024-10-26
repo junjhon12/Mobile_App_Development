@@ -156,7 +156,7 @@ class _HomePageState extends State<HomePage> {
                 label: 'Expenses',
               ),
               BottomNavigationBarItem(
-                icon: _buildNavIcon(Icons.show_chart, Colors.greenAccent, true),
+                icon: _buildNavIcon(Icons.show_chart, Colors.greenAccent, false),
                 label: 'Investments',
               ),
             ],
@@ -169,28 +169,24 @@ class _HomePageState extends State<HomePage> {
   Widget _buildCard(String title, Color color) {
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8.0),
+        color: color,
+        borderRadius: BorderRadius.circular(10.0),
       ),
       child: Center(
         child: Text(
           title,
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+          style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold, color: Color.fromARGB(255, 0, 0, 0)),
         ),
       ),
     );
   }
 
-  Widget _buildNavIcon(IconData icon, Color bgColor, bool isSelected) {
-    return Container(
-      padding: const EdgeInsets.all(8.0),
-      decoration: BoxDecoration(
-        color: isSelected ? bgColor : Colors.transparent,
-        shape: BoxShape.circle,
-      ),
-      child: Icon(
-        icon,
-        color: isSelected ? Colors.white : Colors.black54,
-      ),
-    );
-  }
+  Widget _buildNavIcon(IconData icon, Color color, bool isSelected) {
+  return Icon(
+    icon,
+    color: isSelected ? color : color.withOpacity(0.5), // Full color when selected, semi-transparent when not
+  );
+}
+
+
 }

@@ -227,28 +227,28 @@ class _SavingsPageState extends State<SavingsPage> {
           }
         },
         type: BottomNavigationBarType.fixed,
-        selectedItemColor: Colors.white,
-        unselectedItemColor: Colors.black54,
-        backgroundColor: Colors.white,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.attach_money),
-            label: 'Income',
+            selectedItemColor: const Color.fromARGB(255, 0, 0, 0),
+            unselectedItemColor: const Color.fromARGB(137, 0, 0, 0),
+            backgroundColor: Colors.white,
+            items: [
+              BottomNavigationBarItem(
+                icon: _buildNavIcon(Icons.attach_money, Colors.redAccent, false),
+                label: 'Income',
+              ),
+              BottomNavigationBarItem(
+                icon: _buildNavIcon(Icons.savings, Colors.amberAccent, false),
+                label: 'Savings',
+              ),
+              BottomNavigationBarItem(
+                icon: _buildNavIcon(Icons.account_balance_wallet, Colors.orangeAccent, false),
+                label: 'Expenses',
+              ),
+              BottomNavigationBarItem(
+                icon: _buildNavIcon(Icons.show_chart, Colors.greenAccent, false),
+                label: 'Investments',
+              ),
+            ],
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.savings),
-            label: 'Savings',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.account_balance_wallet),
-            label: 'Expenses',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.show_chart),
-            label: 'Investments',
-          ),
-        ],
-      ),
     );
   }
 
@@ -286,4 +286,11 @@ class _SavingsPageState extends State<SavingsPage> {
       ),
     );
   }
+
+  Widget _buildNavIcon(IconData icon, Color color, bool isSelected) {
+  return Icon(
+    icon,
+    color: isSelected ? color : color.withOpacity(0.5), // Full color when selected, semi-transparent when not
+  );
+}
 }

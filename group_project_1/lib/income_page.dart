@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'saving_page.dart';
+import 'expenses_page.dart';
+import 'investment_page.dart';
 
 class IncomePage extends StatefulWidget {
   const IncomePage({super.key});
@@ -11,6 +14,7 @@ class IncomePage extends StatefulWidget {
 class _IncomePageState extends State<IncomePage> {
   double totalIncome = 0.0;
   final TextEditingController _amountController = TextEditingController();
+  final List<Map<String, dynamic>> incomeEntries = []; // List to store income entries
 
   @override
   void initState() {
@@ -34,6 +38,7 @@ class _IncomePageState extends State<IncomePage> {
     setState(() {
       double amount = double.tryParse(_amountController.text) ?? 0;
       totalIncome += amount;
+      incomeEntries.add({'title': 'Income Added', 'amount': amount, 'isPositive': true});
     });
     _saveTotalIncome();
     _amountController.clear();
@@ -43,6 +48,7 @@ class _IncomePageState extends State<IncomePage> {
     setState(() {
       double amount = double.tryParse(_amountController.text) ?? 0;
       totalIncome -= amount;
+      incomeEntries.add({'title': 'Income Removed', 'amount': amount, 'isPositive': false});
     });
     _saveTotalIncome();
     _amountController.clear();
@@ -57,6 +63,7 @@ class _IncomePageState extends State<IncomePage> {
       ),
       body: Column(
         children: [
+          // Top Section: Display Total Income
           Container(
             color: Colors.redAccent,
             width: double.infinity,
@@ -69,6 +76,8 @@ class _IncomePageState extends State<IncomePage> {
             ),
           ),
           const SizedBox(height: 16),
+
+          // Input Form for Adding/Removing Income
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Column(
@@ -100,8 +109,119 @@ class _IncomePageState extends State<IncomePage> {
               ],
             ),
           ),
+          const SizedBox(height: 16),
+
+          // Income Entries List
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: ListView.builder(
+                itemCount: incomeEntries.length,
+                itemBuilder: (context, index) {
+                  final entry = incomeEntries[index];
+                  return _buildIncomeEntry(
+                    entry['title'],
+                    entry['amount'],
+                    entry['isPositive'],
+                  );
+                },
+              ),
+            ),
+          ),
+        ],
+      ),
+
+      // Bottom Navigation Bar
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: 0, // Highlight the Income tab
+        onTap: (index) {
+          if (index == 0) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const IncomePage()),
+            );
+          } else if (index == 1) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const SavingsPage()),
+            );
+          } else if (index == 2) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const ExpensesPage()),
+            );
+          } else if (index == 3) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const InvestmentPage()),
+            );
+          }
+        },
+        type: BottomNavigationBarType.fixed,
+            selectedItemColor: const Color.fromARGB(255, 0, 0, 0),
+            unselectedItemColor: const Color.fromARGB(137, 0, 0, 0),
+            backgroundColor: Colors.white,
+            items: [
+              BottomNavigationBarItem(
+                icon: _buildNavIcon(Icons.attach_money, Colors.redAccent, false),
+                label: 'Income',
+              ),
+              BottomNavigationBarItem(
+                icon: _buildNavIcon(Icons.savings, Colors.amberAccent, false),
+                label: 'Savings',
+              ),
+              BottomNavigationBarItem(
+                icon: _buildNavIcon(Icons.account_balance_wallet, Colors.orangeAccent, false),
+                label: 'Expenses',
+              ),
+              BottomNavigationBarItem(
+                icon: _buildNavIcon(Icons.show_chart, Colors.greenAccent, false),
+                label: 'Investments',
+              ),
+            ],
+          ),
+    );
+  }
+
+  // Function to build income entry
+  Widget _buildIncomeEntry(String title, double amount, bool isPositive) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 8.0),
+      padding: const EdgeInsets.all(8.0),
+      decoration: BoxDecoration(
+        color: Colors.grey[200],
+        borderRadius: BorderRadius.circular(8.0),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Expanded(
+            child: Text(
+              title,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+            ),
+          ),
+          Text(
+            '\$${amount.toStringAsFixed(2)}',
+            style: TextStyle(
+              fontSize: 16,
+              color: isPositive ? Colors.green : Colors.red,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          Icon(
+            isPositive ? Icons.add_circle : Icons.remove_circle,
+            color: isPositive ? Colors.green : Colors.red,
+          ),
         ],
       ),
     );
   }
+
+  Widget _buildNavIcon(IconData icon, Color color, bool isSelected) {
+  return Icon(
+    icon,
+    color: isSelected ? color : color.withOpacity(0.5), // Full color when selected, semi-transparent when not
+  );
+}
 }
