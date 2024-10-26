@@ -68,7 +68,7 @@ class _HomePageState extends State<HomePage> {
                 child: Center(
                   child: Text(
                     '\$$totalIncome',
-                    style: const TextStyle(fontSize: 36, fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontSize: 50, fontWeight: FontWeight.bold),
                   ),
                 ),
               ),
@@ -175,7 +175,7 @@ class _HomePageState extends State<HomePage> {
       child: Center(
         child: Text(
           title,
-          style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold, color: Color.fromARGB(255, 0, 0, 0)),
+          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color.fromARGB(255, 0, 0, 0)),
         ),
       ),
     );
