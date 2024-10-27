@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'income_page.dart';
 import 'saving_page.dart';
 import 'investment_page.dart';
@@ -13,26 +14,51 @@ class ExpensesPage extends StatefulWidget {
 class _ExpensesPageState extends State<ExpensesPage> {
   double totalExpenses = 0.0; // Current expenses total
   final TextEditingController _amountController = TextEditingController();
+  final TextEditingController _categoryController = TextEditingController();
   final List<Map<String, dynamic>> expenseEntries = []; // List to store expense entries
+
+  @override
+  void initState() {
+    super.initState();
+    _loadTotalExpenses();
+  }
+
+  Future<void> _loadTotalExpenses() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      totalExpenses = prefs.getDouble('totalExpenses') ?? 0.0;
+    });
+  }
+
+  Future<void> _saveTotalExpenses() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setDouble('totalExpenses', totalExpenses);
+  }
 
   // Function to add an expense
   void _addExpense() {
     setState(() {
       double amount = double.tryParse(_amountController.text) ?? 0;
+      String category = _categoryController.text.isNotEmpty ? _categoryController.text : 'General';
       totalExpenses += amount;
-      expenseEntries.add({'title': 'Expense Added', 'amount': amount, 'isPositive': true});
+      expenseEntries.add({'title': category, 'amount': amount, 'isPositive': true});
     });
-    _amountController.clear(); // Clear input after updating
+    _saveTotalExpenses();
+    _amountController.clear();
+    _categoryController.clear();
   }
 
   // Function to remove an expense
   void _removeExpense() {
     setState(() {
       double amount = double.tryParse(_amountController.text) ?? 0;
+      String category = _categoryController.text.isNotEmpty ? _categoryController.text : 'General';
       totalExpenses -= amount;
-      expenseEntries.add({'title': 'Expense Removed', 'amount': amount, 'isPositive': false});
+      expenseEntries.add({'title': category, 'amount': amount, 'isPositive': false});
     });
-    _amountController.clear(); // Clear input after updating
+    _saveTotalExpenses();
+    _amountController.clear();
+    _categoryController.clear();
   }
 
   @override
@@ -67,7 +93,6 @@ class _ExpensesPageState extends State<ExpensesPage> {
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Column(
               children: [
-                // Input field for expense amount
                 TextField(
                   controller: _amountController,
                   keyboardType: TextInputType.number,
@@ -76,12 +101,18 @@ class _ExpensesPageState extends State<ExpensesPage> {
                     border: OutlineInputBorder(),
                   ),
                 ),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: _categoryController,
+                  decoration: const InputDecoration(
+                    labelText: 'Enter Category (e.g., Food, Transport)',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
                 const SizedBox(height: 16),
-                // Buttons for adding or removing expenses
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    // Button to add expense
                     GestureDetector(
                       onTap: _addExpense,
                       child: Container(
@@ -97,7 +128,6 @@ class _ExpensesPageState extends State<ExpensesPage> {
                         ),
                       ),
                     ),
-                    // Button to remove expense
                     GestureDetector(
                       onTap: _removeExpense,
                       child: Container(
@@ -142,7 +172,7 @@ class _ExpensesPageState extends State<ExpensesPage> {
 
       // Bottom Navigation Bar
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 2, // Highlight the Expenses tab
+        currentIndex: 2,
         onTap: (index) {
           if (index == 0) {
             Navigator.pushReplacement(
@@ -180,7 +210,7 @@ class _ExpensesPageState extends State<ExpensesPage> {
             label: 'Savings',
           ),
           BottomNavigationBarItem(
-            icon: _buildNavIcon(Icons.account_balance_wallet, Colors.orangeAccent, false),
+            icon: _buildNavIcon(Icons.account_balance_wallet, Colors.orangeAccent, true),
             label: 'Expenses',
           ),
           BottomNavigationBarItem(
@@ -230,7 +260,7 @@ class _ExpensesPageState extends State<ExpensesPage> {
   Widget _buildNavIcon(IconData icon, Color color, bool isSelected) {
     return Icon(
       icon,
-      color: isSelected ? color : color.withOpacity(0.5), // Full color when selected, semi-transparent otherwise
+      color: isSelected ? color : color.withOpacity(0.5),
     );
   }
 }

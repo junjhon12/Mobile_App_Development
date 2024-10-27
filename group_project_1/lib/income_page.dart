@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'expenses_page.dart';
 import 'investment_page.dart';
 import 'saving_page.dart';
+import 'package:intl/intl.dart';
 
 class IncomePage extends StatefulWidget {
   const IncomePage({super.key});
@@ -31,29 +32,63 @@ class _IncomePageState extends State<IncomePage> {
 
   Future<void> _saveTotalIncome() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setDouble('totalIncome', totalIncome);
+    await prefs.setDouble('totalIncome', totalIncome);
+  }
+
+  Future<void> _resetTotalIncome() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      totalIncome = 0.0;
+      incomeEntries
+          .clear(); // Clears the list if you want to remove past entries too
+    });
+    await prefs.setDouble('totalIncome', totalIncome); // Save the reset value
   }
 
   // Add income to total and list
   void _addIncome() {
+    double amount = double.tryParse(_amountController.text) ?? 0;
+    if (amount <= 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter a valid amount.')),
+      );
+      return;
+    }
+
     setState(() {
-      double amount = double.tryParse(_amountController.text) ?? 0;
       totalIncome += amount;
-      incomeEntries.add({'title': 'Income Added', 'amount': amount, 'isPositive': true});
+      incomeEntries.add({
+        'title': 'Income Added',
+        'amount': amount,
+        'isPositive': true,
+        'date': DateFormat('yyyy-MM-dd').format(DateTime.now()),
+      });
     });
     _saveTotalIncome();
-    _amountController.clear(); // Clear the input field after updating
+    _amountController.clear();
   }
 
   // Remove income from total and list
   void _removeIncome() {
+    double amount = double.tryParse(_amountController.text) ?? 0;
+    if (amount <= 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter a valid amount.')),
+      );
+      return;
+    }
+
     setState(() {
-      double amount = double.tryParse(_amountController.text) ?? 0;
       totalIncome -= amount;
-      incomeEntries.add({'title': 'Income Removed', 'amount': amount, 'isPositive': false});
+      incomeEntries.add({
+        'title': 'Income Removed',
+        'amount': amount,
+        'isPositive': false,
+        'date': DateFormat('yyyy-MM-dd').format(DateTime.now()),
+      });
     });
     _saveTotalIncome();
-    _amountController.clear(); // Clear the input field after updating
+    _amountController.clear();
   }
 
   @override
@@ -62,6 +97,13 @@ class _IncomePageState extends State<IncomePage> {
       appBar: AppBar(
         title: const Text('Income'),
         centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: _resetTotalIncome,
+            tooltip: 'Reset Income',
+          ),
+        ],
       ),
       body: Column(
         children: [
@@ -141,7 +183,7 @@ class _IncomePageState extends State<IncomePage> {
           ),
           const SizedBox(height: 16),
 
-          // Income List (Similar to the Transaction List)
+          // Income Entries List
           Expanded(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -153,6 +195,7 @@ class _IncomePageState extends State<IncomePage> {
                     entry['title'],
                     entry['amount'],
                     entry['isPositive'],
+                    entry['date'],
                   );
                 },
               ),
@@ -193,19 +236,19 @@ class _IncomePageState extends State<IncomePage> {
         backgroundColor: Colors.white,
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.attach_money),
+            icon: Icon(Icons.attach_money, color: Colors.redAccent),
             label: 'Income',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.savings),
+            icon: Icon(Icons.savings, color: Colors.amberAccent),
             label: 'Savings',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.account_balance_wallet),
+            icon: Icon(Icons.account_balance_wallet, color: Colors.orangeAccent),
             label: 'Expenses',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.show_chart),
+            icon: Icon(Icons.show_chart, color: Colors.greenAccent),
             label: 'Investments',
           ),
         ],
@@ -213,31 +256,36 @@ class _IncomePageState extends State<IncomePage> {
     );
   }
 
-  // Function to build income entry item
-  Widget _buildIncomeItem(String title, double amount, bool isPositive) {
+  Widget _buildIncomeItem(
+      String title, double amount, bool isPositive, String date) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8.0),
       padding: const EdgeInsets.all(8.0),
       decoration: BoxDecoration(
-        color: Colors.grey[200],
-        borderRadius: BorderRadius.circular(8.0),
-      ),
+          color: Colors.grey[200], borderRadius: BorderRadius.circular(8.0)),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Expanded(
-            child: Text(
-              title,
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.w500),
+                ),
+                Text(date,
+                    style: const TextStyle(color: Colors.grey, fontSize: 12)),
+              ],
             ),
           ),
           Text(
             '\$${amount.toStringAsFixed(2)}',
             style: TextStyle(
-              fontSize: 16,
-              color: isPositive ? Colors.green : Colors.red,
-              fontWeight: FontWeight.bold,
-            ),
+                fontSize: 16,
+                color: isPositive ? Colors.green : Colors.red,
+                fontWeight: FontWeight.bold),
           ),
           Icon(
             isPositive ? Icons.add_circle : Icons.remove_circle,

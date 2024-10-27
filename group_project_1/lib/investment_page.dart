@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'income_page.dart';
 import 'saving_page.dart';
 import 'expenses_page.dart';
@@ -15,6 +16,24 @@ class _InvestmentPageState extends State<InvestmentPage> {
   final TextEditingController _amountController = TextEditingController();
   final List<Map<String, dynamic>> investmentEntries = []; // List for investment entries
 
+  @override
+  void initState() {
+    super.initState();
+    _loadTotalInvestments();
+  }
+
+  Future<void> _loadTotalInvestments() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      totalInvestments = prefs.getDouble('totalInvestments') ?? 0.0;
+    });
+  }
+
+  Future<void> _saveTotalInvestments() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setDouble('totalInvestments', totalInvestments);
+  }
+
   // Function to add an investment
   void _addInvestment() {
     setState(() {
@@ -22,7 +41,8 @@ class _InvestmentPageState extends State<InvestmentPage> {
       totalInvestments += amount;
       investmentEntries.add({'title': 'Investment Added', 'amount': amount, 'isPositive': true});
     });
-    _amountController.clear(); // Clear input field after updating
+    _saveTotalInvestments();
+    _amountController.clear();
   }
 
   // Function to remove an investment
@@ -32,7 +52,8 @@ class _InvestmentPageState extends State<InvestmentPage> {
       totalInvestments -= amount;
       investmentEntries.add({'title': 'Investment Removed', 'amount': amount, 'isPositive': false});
     });
-    _amountController.clear(); // Clear input field after updating
+    _saveTotalInvestments();
+    _amountController.clear();
   }
 
   @override
@@ -176,7 +197,7 @@ class _InvestmentPageState extends State<InvestmentPage> {
             label: 'Expenses',
           ),
           BottomNavigationBarItem(
-            icon: _buildNavIcon(Icons.show_chart, Colors.greenAccent, false),
+            icon: _buildNavIcon(Icons.show_chart, Colors.greenAccent, true),
             label: 'Investments',
           ),
         ],
@@ -184,7 +205,7 @@ class _InvestmentPageState extends State<InvestmentPage> {
     );
   }
 
-  // Function to build investment entry
+  // Function to build individual investment entry
   Widget _buildInvestmentEntry(String title, double amount, bool isPositive) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8.0),
@@ -219,10 +240,11 @@ class _InvestmentPageState extends State<InvestmentPage> {
     );
   }
 
+  // Function to style bottom navigation icons
   Widget _buildNavIcon(IconData icon, Color color, bool isSelected) {
     return Icon(
       icon,
-      color: isSelected ? color : color.withOpacity(0.5), // Full color when selected, semi-transparent otherwise
+      color: isSelected ? color : color.withOpacity(0.5),
     );
   }
 }
