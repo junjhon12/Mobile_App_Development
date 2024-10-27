@@ -11,16 +11,18 @@ class ExpensesPage extends StatefulWidget {
 }
 
 class _ExpensesPageState extends State<ExpensesPage> {
-  double totalExpenses = 0.00; // Starting total expenses
+  double totalExpenses = 0.0; // Current expenses total
   final TextEditingController _amountController = TextEditingController();
+  final List<Map<String, dynamic>> expenseEntries = []; // List to store expense entries
 
   // Function to add an expense
   void _addExpense() {
     setState(() {
       double amount = double.tryParse(_amountController.text) ?? 0;
       totalExpenses += amount;
+      expenseEntries.add({'title': 'Expense Added', 'amount': amount, 'isPositive': true});
     });
-    _amountController.clear(); // Clear the input field after updating
+    _amountController.clear(); // Clear input after updating
   }
 
   // Function to remove an expense
@@ -28,8 +30,9 @@ class _ExpensesPageState extends State<ExpensesPage> {
     setState(() {
       double amount = double.tryParse(_amountController.text) ?? 0;
       totalExpenses -= amount;
+      expenseEntries.add({'title': 'Expense Removed', 'amount': amount, 'isPositive': false});
     });
-    _amountController.clear(); // Clear the input field after updating
+    _amountController.clear(); // Clear input after updating
   }
 
   @override
@@ -41,14 +44,14 @@ class _ExpensesPageState extends State<ExpensesPage> {
       ),
       body: Column(
         children: [
-          // Top Section for Total Expenses
+          // Top Section: Display Total Expenses
           Container(
             color: Colors.orangeAccent,
             width: double.infinity,
             padding: const EdgeInsets.all(16.0),
             child: Center(
               child: Text(
-                '\$$totalExpenses', // Dynamically display the updated total expenses
+                '\$$totalExpenses',
                 style: const TextStyle(
                   fontSize: 36,
                   fontWeight: FontWeight.bold,
@@ -59,12 +62,12 @@ class _ExpensesPageState extends State<ExpensesPage> {
           ),
           const SizedBox(height: 16),
 
-          // Form Section for Adding or Removing Expenses
+          // Input Form for Adding/Removing Expenses
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Column(
               children: [
-                // Input field for amount
+                // Input field for expense amount
                 TextField(
                   controller: _amountController,
                   keyboardType: TextInputType.number,
@@ -78,7 +81,7 @@ class _ExpensesPageState extends State<ExpensesPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    // Button for adding expense
+                    // Button to add expense
                     GestureDetector(
                       onTap: _addExpense,
                       child: Container(
@@ -94,7 +97,7 @@ class _ExpensesPageState extends State<ExpensesPage> {
                         ),
                       ),
                     ),
-                    // Button for removing expense
+                    // Button to remove expense
                     GestureDetector(
                       onTap: _removeExpense,
                       child: Container(
@@ -117,15 +120,21 @@ class _ExpensesPageState extends State<ExpensesPage> {
           ),
           const SizedBox(height: 16),
 
-          // List of expense entries
+          // Expense Entries List
           Expanded(
-            child: ListView(
-              children: [
-                _buildExpenseEntry('Groceries', 200.00),
-                _buildExpenseEntry('Rent', 500.00),
-                _buildExpenseEntry('Transportation', 100.00),
-                // Add more expense entries here
-              ],
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: ListView.builder(
+                itemCount: expenseEntries.length,
+                itemBuilder: (context, index) {
+                  final entry = expenseEntries[index];
+                  return _buildExpenseEntry(
+                    entry['title'],
+                    entry['amount'],
+                    entry['isPositive'],
+                  );
+                },
+              ),
             ),
           ),
         ],
@@ -158,67 +167,70 @@ class _ExpensesPageState extends State<ExpensesPage> {
           }
         },
         type: BottomNavigationBarType.fixed,
-            selectedItemColor: const Color.fromARGB(255, 0, 0, 0),
-            unselectedItemColor: const Color.fromARGB(137, 0, 0, 0),
-            backgroundColor: Colors.white,
-            items: [
-              BottomNavigationBarItem(
-                icon: _buildNavIcon(Icons.attach_money, Colors.redAccent, false),
-                label: 'Income',
-              ),
-              BottomNavigationBarItem(
-                icon: _buildNavIcon(Icons.savings, Colors.amberAccent, false),
-                label: 'Savings',
-              ),
-              BottomNavigationBarItem(
-                icon: _buildNavIcon(Icons.account_balance_wallet, Colors.orangeAccent, false),
-                label: 'Expenses',
-              ),
-              BottomNavigationBarItem(
-                icon: _buildNavIcon(Icons.show_chart, Colors.greenAccent, false),
-                label: 'Investments',
-              ),
-            ],
+        selectedItemColor: const Color.fromARGB(255, 0, 0, 0),
+        unselectedItemColor: const Color.fromARGB(137, 0, 0, 0),
+        backgroundColor: Colors.white,
+        items: [
+          BottomNavigationBarItem(
+            icon: _buildNavIcon(Icons.attach_money, Colors.redAccent, false),
+            label: 'Income',
           ),
+          BottomNavigationBarItem(
+            icon: _buildNavIcon(Icons.savings, Colors.amberAccent, false),
+            label: 'Savings',
+          ),
+          BottomNavigationBarItem(
+            icon: _buildNavIcon(Icons.account_balance_wallet, Colors.orangeAccent, false),
+            label: 'Expenses',
+          ),
+          BottomNavigationBarItem(
+            icon: _buildNavIcon(Icons.show_chart, Colors.greenAccent, false),
+            label: 'Investments',
+          ),
+        ],
+      ),
     );
   }
 
-  // Function to build individual expense entries
-  Widget _buildExpenseEntry(String category, double amount) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8.0),
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.5),
-              spreadRadius: 2,
-              blurRadius: 5,
-              offset: const Offset(0, 3),
-            ),
-          ],
-        ),
-        child: ListTile(
-          title: Text(category, style: const TextStyle(fontSize: 18)),
-          trailing: Text(
-            '\$$amount',
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
+  // Function to build individual expense entry
+  Widget _buildExpenseEntry(String title, double amount, bool isPositive) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 8.0),
+      padding: const EdgeInsets.all(8.0),
+      decoration: BoxDecoration(
+        color: Colors.grey[200],
+        borderRadius: BorderRadius.circular(8.0),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Expanded(
+            child: Text(
+              title,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
             ),
           ),
-        ),
+          Text(
+            '\$${amount.toStringAsFixed(2)}',
+            style: TextStyle(
+              fontSize: 16,
+              color: isPositive ? Colors.green : Colors.red,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          Icon(
+            isPositive ? Icons.add_circle : Icons.remove_circle,
+            color: isPositive ? Colors.green : Colors.red,
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildNavIcon(IconData icon, Color color, bool isSelected) {
-  return Icon(
-    icon,
-    color: isSelected ? color : color.withOpacity(0.5), // Full color when selected, semi-transparent when not
-  );
-}
+    return Icon(
+      icon,
+      color: isSelected ? color : color.withOpacity(0.5), // Full color when selected, semi-transparent otherwise
+    );
+  }
 }

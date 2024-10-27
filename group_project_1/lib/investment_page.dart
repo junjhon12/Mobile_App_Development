@@ -11,16 +11,18 @@ class InvestmentPage extends StatefulWidget {
 }
 
 class _InvestmentPageState extends State<InvestmentPage> {
-  double totalInvestments = 0.00; // Starting total investments
+  double totalInvestments = 0.0; // Current investments total
   final TextEditingController _amountController = TextEditingController();
+  final List<Map<String, dynamic>> investmentEntries = []; // List for investment entries
 
   // Function to add an investment
   void _addInvestment() {
     setState(() {
       double amount = double.tryParse(_amountController.text) ?? 0;
       totalInvestments += amount;
+      investmentEntries.add({'title': 'Investment Added', 'amount': amount, 'isPositive': true});
     });
-    _amountController.clear(); // Clear the input field after updating
+    _amountController.clear(); // Clear input field after updating
   }
 
   // Function to remove an investment
@@ -28,8 +30,9 @@ class _InvestmentPageState extends State<InvestmentPage> {
     setState(() {
       double amount = double.tryParse(_amountController.text) ?? 0;
       totalInvestments -= amount;
+      investmentEntries.add({'title': 'Investment Removed', 'amount': amount, 'isPositive': false});
     });
-    _amountController.clear(); // Clear the input field after updating
+    _amountController.clear(); // Clear input field after updating
   }
 
   @override
@@ -48,7 +51,7 @@ class _InvestmentPageState extends State<InvestmentPage> {
             padding: const EdgeInsets.all(16.0),
             child: Center(
               child: Text(
-                '\$$totalInvestments', // Dynamically display the updated total investments
+                '\$$totalInvestments',
                 style: const TextStyle(fontSize: 36, fontWeight: FontWeight.bold, color: Colors.white),
               ),
             ),
@@ -72,7 +75,6 @@ class _InvestmentPageState extends State<InvestmentPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    // Button for adding investment
                     GestureDetector(
                       onTap: _addInvestment,
                       child: Container(
@@ -88,7 +90,6 @@ class _InvestmentPageState extends State<InvestmentPage> {
                         ),
                       ),
                     ),
-                    // Button for removing investment
                     GestureDetector(
                       onTap: _removeInvestment,
                       child: Container(
@@ -111,15 +112,21 @@ class _InvestmentPageState extends State<InvestmentPage> {
           ),
           const SizedBox(height: 16),
 
-          // List of investment entries
+          // Investment Entries List
           Expanded(
-            child: ListView(
-              children: [
-                _buildInvestmentEntry('Stocks', 3000.00),
-                _buildInvestmentEntry('Bonds', 1000.00),
-                _buildInvestmentEntry('Cryptocurrency', 1000.00),
-                // Add more investment entries here
-              ],
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: ListView.builder(
+                itemCount: investmentEntries.length,
+                itemBuilder: (context, index) {
+                  final entry = investmentEntries[index];
+                  return _buildInvestmentEntry(
+                    entry['title'],
+                    entry['amount'],
+                    entry['isPositive'],
+                  );
+                },
+              ),
             ),
           ),
         ],
@@ -152,28 +159,70 @@ class _InvestmentPageState extends State<InvestmentPage> {
           }
         },
         type: BottomNavigationBarType.fixed,
-            selectedItemColor: const Color.fromARGB(255, 0, 0, 0),
-            unselectedItemColor: const Color.fromARGB(137, 0, 0, 0),
-            backgroundColor: Colors.white,
-            items: [
-              BottomNavigationBarItem(
-                icon: _buildNavIcon(Icons.attach_money, Colors.redAccent, false),
-                label: 'Income',
-              ),
-              BottomNavigationBarItem(
-                icon: _buildNavIcon(Icons.savings, Colors.amberAccent, false),
-                label: 'Savings',
-              ),
-              BottomNavigationBarItem(
-                icon: _buildNavIcon(Icons.account_balance_wallet, Colors.orangeAccent, false),
-                label: 'Expenses',
-              ),
+        selectedItemColor: const Color.fromARGB(255, 0, 0, 0),
+        unselectedItemColor: const Color.fromARGB(137, 0, 0, 0),
+        backgroundColor: Colors.white,
+        items: [
+          BottomNavigationBarItem(
+            icon: _buildNavIcon(Icons.attach_money, Colors.redAccent, false),
+            label: 'Income',
+          ),
+          BottomNavigationBarItem(
+            icon: _buildNavIcon(Icons.savings, Colors.amberAccent, false),
+            label: 'Savings',
+          ),
+          BottomNavigationBarItem(
+            icon: _buildNavIcon(Icons.account_balance_wallet, Colors.orangeAccent, false),
+            label: 'Expenses',
+          ),
+          BottomNavigationBarItem(
+            icon: _buildNavIcon(Icons.show_chart, Colors.greenAccent, false),
+            label: 'Investments',
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Function to build investment entry
+  Widget _buildInvestmentEntry(String title, double amount, bool isPositive) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 8.0),
+      padding: const EdgeInsets.all(8.0),
+      decoration: BoxDecoration(
+        color: Colors.grey[200],
+        borderRadius: BorderRadius.circular(8.0),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Expanded(
+            child: Text(
+              title,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+            ),
+          ),
+          Text(
+            '\$${amount.toStringAsFixed(2)}',
+            style: TextStyle(
+              fontSize: 16,
+              color: isPositive ? Colors.green : Colors.red,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           Icon(
             isPositive ? Icons.add_circle : Icons.remove_circle,
             color: isPositive ? Colors.green : Colors.red,
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildNavIcon(IconData icon, Color color, bool isSelected) {
+    return Icon(
+      icon,
+      color: isSelected ? color : color.withOpacity(0.5), // Full color when selected, semi-transparent otherwise
     );
   }
 }

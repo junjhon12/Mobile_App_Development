@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'expenses_page.dart';
 import 'investment_page.dart';
+import 'saving_page.dart';
 
 class IncomePage extends StatefulWidget {
   const IncomePage({super.key});
@@ -11,10 +12,9 @@ class IncomePage extends StatefulWidget {
 }
 
 class _IncomePageState extends State<IncomePage> {
-  double totalIncome = 0.0;
+  double totalIncome = 0.0; // Current income
   final TextEditingController _amountController = TextEditingController();
-  final List<Map<String, dynamic>> incomeEntries = []; // List to store income entries
-  int _selectedIndex = 0; // Track selected index for BottomNavigationBar
+  final List<Map<String, dynamic>> incomeEntries = []; // Store income entries
 
   @override
   void initState() {
@@ -34,6 +34,7 @@ class _IncomePageState extends State<IncomePage> {
     prefs.setDouble('totalIncome', totalIncome);
   }
 
+  // Add income to total and list
   void _addIncome() {
     setState(() {
       double amount = double.tryParse(_amountController.text) ?? 0;
@@ -41,9 +42,10 @@ class _IncomePageState extends State<IncomePage> {
       incomeEntries.add({'title': 'Income Added', 'amount': amount, 'isPositive': true});
     });
     _saveTotalIncome();
-    _amountController.clear();
+    _amountController.clear(); // Clear the input field after updating
   }
 
+  // Remove income from total and list
   void _removeIncome() {
     setState(() {
       double amount = double.tryParse(_amountController.text) ?? 0;
@@ -51,22 +53,7 @@ class _IncomePageState extends State<IncomePage> {
       incomeEntries.add({'title': 'Income Removed', 'amount': amount, 'isPositive': false});
     });
     _saveTotalIncome();
-    _amountController.clear();
-  }
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-    if (index == 0) {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => const IncomePage()));
-    } else if (index == 1) {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => const SavingsPage()));
-    } else if (index == 2) {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => const ExpensesPage()));
-    } else if (index == 3) {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => const InvestmentPage()));
-    }
+    _amountController.clear(); // Clear the input field after updating
   }
 
   @override
@@ -82,10 +69,15 @@ class _IncomePageState extends State<IncomePage> {
           Container(
             color: Colors.redAccent,
             padding: const EdgeInsets.all(16.0),
+            width: double.infinity,
             child: Center(
               child: Text(
                 '\$$totalIncome',
-                style: const TextStyle(fontSize: 36, fontWeight: FontWeight.bold, color: Colors.white),
+                style: const TextStyle(
+                  fontSize: 36,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
               ),
             ),
           ),
@@ -96,6 +88,7 @@ class _IncomePageState extends State<IncomePage> {
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Column(
               children: [
+                // Amount input field
                 TextField(
                   controller: _amountController,
                   keyboardType: TextInputType.number,
@@ -105,6 +98,7 @@ class _IncomePageState extends State<IncomePage> {
                   ),
                 ),
                 const SizedBox(height: 16),
+                // Buttons for adding or removing income
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
@@ -147,7 +141,7 @@ class _IncomePageState extends State<IncomePage> {
           ),
           const SizedBox(height: 16),
 
-          // Income Entries List
+          // Income List (Similar to the Transaction List)
           Expanded(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -155,7 +149,7 @@ class _IncomePageState extends State<IncomePage> {
                 itemCount: incomeEntries.length,
                 itemBuilder: (context, index) {
                   final entry = incomeEntries[index];
-                  return _buildIncomeEntry(
+                  return _buildIncomeItem(
                     entry['title'],
                     entry['amount'],
                     entry['isPositive'],
@@ -169,27 +163,49 @@ class _IncomePageState extends State<IncomePage> {
 
       // Bottom Navigation Bar
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex, // Dynamic tracking of selected tab
-        onTap: _onItemTapped, // Update the selected index
+        currentIndex: 0, // Highlight the Income tab
+        onTap: (index) {
+          if (index == 0) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const IncomePage()),
+            );
+          } else if (index == 1) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const SavingsPage()),
+            );
+          } else if (index == 2) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const ExpensesPage()),
+            );
+          } else if (index == 3) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const InvestmentPage()),
+            );
+          }
+        },
         type: BottomNavigationBarType.fixed,
-        selectedItemColor: Colors.black, // Color for selected icons and labels
-        unselectedItemColor: Colors.black54, // Color for unselected icons and labels
+        selectedItemColor: const Color.fromARGB(255, 0, 0, 0),
+        unselectedItemColor: const Color.fromARGB(137, 0, 0, 0),
         backgroundColor: Colors.white,
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.attach_money, color: Colors.redAccent),
+            icon: Icon(Icons.attach_money),
             label: 'Income',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.savings, color: Colors.amberAccent),
+            icon: Icon(Icons.savings),
             label: 'Savings',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.account_balance_wallet, color: Colors.orangeAccent),
+            icon: Icon(Icons.account_balance_wallet),
             label: 'Expenses',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.show_chart, color: Colors.greenAccent),
+            icon: Icon(Icons.show_chart),
             label: 'Investments',
           ),
         ],
@@ -197,8 +213,8 @@ class _IncomePageState extends State<IncomePage> {
     );
   }
 
-  // Function to build income entry
-  Widget _buildIncomeEntry(String title, double amount, bool isPositive) {
+  // Function to build income entry item
+  Widget _buildIncomeItem(String title, double amount, bool isPositive) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8.0),
       padding: const EdgeInsets.all(8.0),
