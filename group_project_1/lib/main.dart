@@ -33,6 +33,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   double totalIncome = 0.0;
+  int _selectedIndex = 0; // To track the selected tab in BottomNavigationBar
 
   @override
   void initState() {
@@ -45,6 +46,35 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       totalIncome = prefs.getDouble('totalIncome') ?? 0.0;
     });
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+
+    // Navigate to the corresponding page
+    if (index == 0) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const IncomePage()),
+      ).then((_) => _loadTotalIncome()); // Reload income when returning
+    } else if (index == 1) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const SavingsPage()),
+      );
+    } else if (index == 2) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const ExpensesPage()),
+      );
+    } else if (index == 3) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const InvestmentPage()),
+      );
+    }
   }
 
   @override
@@ -124,39 +154,30 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
           ),
+
+          // Bottom Navigation Bar
           BottomNavigationBar(
-            currentIndex: 3,
-            onTap: (index) {
-              if (index == 0) {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => const IncomePage()))
-                    .then((_) => _loadTotalIncome());
-              } else if (index == 1) {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => const SavingsPage()));
-              } else if (index == 2) {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => const ExpensesPage()));
-              } else if (index == 3) {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => const InvestmentPage()));
-              }
-            },
+            currentIndex: _selectedIndex, // Highlight selected tab
+            onTap: _onItemTapped, // Handle tap events
             type: BottomNavigationBarType.fixed,
-            selectedItemColor: Colors.white,
+            selectedItemColor: Colors.black,
             unselectedItemColor: Colors.black54,
             backgroundColor: Colors.white,
-            items: [
+            items: const [
               BottomNavigationBarItem(
-                icon: _buildNavIcon(Icons.attach_money, Colors.redAccent, false),
+                icon: Icon(Icons.attach_money, color: Colors.redAccent),
                 label: 'Income',
               ),
               BottomNavigationBarItem(
-                icon: _buildNavIcon(Icons.savings, Colors.amberAccent, false),
+                icon: Icon(Icons.savings, color: Colors.amberAccent),
                 label: 'Savings',
               ),
               BottomNavigationBarItem(
-                icon: _buildNavIcon(Icons.account_balance_wallet, Colors.orangeAccent, false),
+                icon: Icon(Icons.account_balance_wallet, color: Colors.orangeAccent),
                 label: 'Expenses',
               ),
               BottomNavigationBarItem(
-                icon: _buildNavIcon(Icons.show_chart, Colors.greenAccent, false),
+                icon: Icon(Icons.show_chart, color: Colors.greenAccent),
                 label: 'Investments',
               ),
             ],
@@ -175,18 +196,9 @@ class _HomePageState extends State<HomePage> {
       child: Center(
         child: Text(
           title,
-          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color.fromARGB(255, 0, 0, 0)),
+          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black),
         ),
       ),
     );
   }
-
-  Widget _buildNavIcon(IconData icon, Color color, bool isSelected) {
-  return Icon(
-    icon,
-    color: isSelected ? color : color.withOpacity(0.5), // Full color when selected, semi-transparent when not
-  );
-}
-
-
 }

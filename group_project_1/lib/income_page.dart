@@ -15,6 +15,7 @@ class _IncomePageState extends State<IncomePage> {
   double totalIncome = 0.0;
   final TextEditingController _amountController = TextEditingController();
   final List<Map<String, dynamic>> incomeEntries = []; // List to store income entries
+  int _selectedIndex = 0; // Track selected index for BottomNavigationBar
 
   @override
   void initState() {
@@ -52,6 +53,21 @@ class _IncomePageState extends State<IncomePage> {
     });
     _saveTotalIncome();
     _amountController.clear();
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+    if (index == 0) {
+      Navigator.push(context, MaterialPageRoute(builder: (context) => const IncomePage()));
+    } else if (index == 1) {
+      Navigator.push(context, MaterialPageRoute(builder: (context) => const SavingsPage()));
+    } else if (index == 2) {
+      Navigator.push(context, MaterialPageRoute(builder: (context) => const ExpensesPage()));
+    } else if (index == 3) {
+      Navigator.push(context, MaterialPageRoute(builder: (context) => const InvestmentPage()));
+    }
   }
 
   @override
@@ -133,53 +149,31 @@ class _IncomePageState extends State<IncomePage> {
 
       // Bottom Navigation Bar
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 0, // Highlight the Income tab
-        onTap: (index) {
-          if (index == 0) {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const IncomePage()),
-            );
-          } else if (index == 1) {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const SavingsPage()),
-            );
-          } else if (index == 2) {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const ExpensesPage()),
-            );
-          } else if (index == 3) {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const InvestmentPage()),
-            );
-          }
-        },
+        currentIndex: _selectedIndex, // Dynamic tracking of selected tab
+        onTap: _onItemTapped, // Update the selected index
         type: BottomNavigationBarType.fixed,
-            selectedItemColor: const Color.fromARGB(255, 0, 0, 0),
-            unselectedItemColor: const Color.fromARGB(137, 0, 0, 0),
-            backgroundColor: Colors.white,
-            items: [
-              BottomNavigationBarItem(
-                icon: _buildNavIcon(Icons.attach_money, Colors.redAccent, false),
-                label: 'Income',
-              ),
-              BottomNavigationBarItem(
-                icon: _buildNavIcon(Icons.savings, Colors.amberAccent, false),
-                label: 'Savings',
-              ),
-              BottomNavigationBarItem(
-                icon: _buildNavIcon(Icons.account_balance_wallet, Colors.orangeAccent, false),
-                label: 'Expenses',
-              ),
-              BottomNavigationBarItem(
-                icon: _buildNavIcon(Icons.show_chart, Colors.greenAccent, false),
-                label: 'Investments',
-              ),
-            ],
+        selectedItemColor: Colors.black, // Color for selected icons and labels
+        unselectedItemColor: Colors.black54, // Color for unselected icons and labels
+        backgroundColor: Colors.white,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.attach_money, color: Colors.redAccent),
+            label: 'Income',
           ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.savings, color: Colors.amberAccent),
+            label: 'Savings',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.account_balance_wallet, color: Colors.orangeAccent),
+            label: 'Expenses',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.show_chart, color: Colors.greenAccent),
+            label: 'Investments',
+          ),
+        ],
+      ),
     );
   }
 
@@ -217,11 +211,4 @@ class _IncomePageState extends State<IncomePage> {
       ),
     );
   }
-
-  Widget _buildNavIcon(IconData icon, Color color, bool isSelected) {
-  return Icon(
-    icon,
-    color: isSelected ? color : color.withOpacity(0.5), // Full color when selected, semi-transparent when not
-  );
-}
 }
