@@ -41,12 +41,15 @@ class _InvestmentPageState extends State<InvestmentPage> {
     final entries = prefs.getStringList('investmentEntries') ?? [];
     setState(() {
       investmentEntries.clear();
-      investmentEntries.addAll(entries.map((e) => Map<String, dynamic>.from(Uri.decodeComponent(e) as Map)));
+      investmentEntries.addAll(entries.map(
+          (e) => Map<String, dynamic>.from(Uri.decodeComponent(e) as Map)));
     });
   }
 
   void _saveInvestmentEntries(SharedPreferences prefs) {
-    final entries = investmentEntries.map((e) => Uri.encodeComponent(e.toString())).toList();
+    final entries = investmentEntries
+        .map((e) => Uri.encodeComponent(e.toString()))
+        .toList();
     prefs.setStringList('investmentEntries', entries);
   }
 
@@ -116,7 +119,10 @@ class _InvestmentPageState extends State<InvestmentPage> {
             child: Center(
               child: Text(
                 '\$$totalInvestments',
-                style: const TextStyle(fontSize: 36, fontWeight: FontWeight.bold, color: Colors.white),
+                style: const TextStyle(
+                    fontSize: 36,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white),
               ),
             ),
           ),
@@ -136,7 +142,8 @@ class _InvestmentPageState extends State<InvestmentPage> {
                             child: Text(category),
                           ))
                       .toList(),
-                  onChanged: (value) => setState(() => _selectedCategory = value),
+                  onChanged: (value) =>
+                      setState(() => _selectedCategory = value),
                   decoration: const InputDecoration(
                     labelText: 'Select Investment Type',
                     border: OutlineInputBorder(),
@@ -217,10 +224,20 @@ class _InvestmentPageState extends State<InvestmentPage> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: 3,
         onTap: (index) {
-          if (index == 0) Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const IncomePage()));
-          else if (index == 1) Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const SavingsPage()));
-          else if (index == 2) Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const ExpensesPage()));
-          else if (index == 3) Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const InvestmentPage()));
+          if (index == 0) {
+            Navigator.pushReplacement(context,
+                MaterialPageRoute(builder: (context) => const IncomePage()));
+          } else if (index == 1)
+            Navigator.pushReplacement(context,
+                MaterialPageRoute(builder: (context) => const SavingsPage()));
+          else if (index == 2)
+            Navigator.pushReplacement(context,
+                MaterialPageRoute(builder: (context) => const ExpensesPage()));
+          else if (index == 3)
+            Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const InvestmentPage()));
         },
         type: BottomNavigationBarType.fixed,
         selectedItemColor: const Color.fromARGB(255, 0, 0, 0),
@@ -236,7 +253,8 @@ class _InvestmentPageState extends State<InvestmentPage> {
             label: 'Savings',
           ),
           BottomNavigationBarItem(
-            icon: _buildNavIcon(Icons.account_balance_wallet, Colors.orangeAccent, false),
+            icon: _buildNavIcon(
+                Icons.account_balance_wallet, Colors.orangeAccent, false),
             label: 'Expenses',
           ),
           BottomNavigationBarItem(
@@ -249,7 +267,8 @@ class _InvestmentPageState extends State<InvestmentPage> {
   }
 
   // Function to build individual investment entry
-  Widget _buildInvestmentEntry(String title, double amount, bool isPositive, String category) {
+  Widget _buildInvestmentEntry(
+      String title, double amount, bool isPositive, String category) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8.0),
       padding: const EdgeInsets.all(8.0),
@@ -260,12 +279,19 @@ class _InvestmentPageState extends State<InvestmentPage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Expanded(child: Text('$title - $category', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500))),
+          Expanded(
+              child: Text('$title - $category',
+                  style: const TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.w500))),
           Text(
             '\$${amount.toStringAsFixed(2)}',
-            style: TextStyle(fontSize: 16, color: isPositive ? Colors.green : Colors.red, fontWeight: FontWeight.bold),
+            style: TextStyle(
+                fontSize: 16,
+                color: isPositive ? Colors.green : Colors.red,
+                fontWeight: FontWeight.bold),
           ),
-          Icon(isPositive ? Icons.add_circle : Icons.remove_circle, color: isPositive ? Colors.green : Colors.red),
+          Icon(isPositive ? Icons.add_circle : Icons.remove_circle,
+              color: isPositive ? Colors.green : Colors.red),
         ],
       ),
     );

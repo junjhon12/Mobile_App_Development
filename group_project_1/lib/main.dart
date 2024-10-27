@@ -17,9 +17,9 @@ class PersonalFinanceApp extends StatelessWidget {
     return MaterialApp(
       title: 'Personal Finance Manager',
       theme: ThemeData(
-        primarySwatch: Colors.green,
+        primarySwatch: Colors.green, // Set primary color theme
       ),
-      home: const HomePage(),
+      home: const HomePage(), // Set HomePage as the initial route
     );
   }
 }
@@ -32,28 +32,31 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  double totalIncome = 0.0;
-  int _selectedIndex = 0; // To track the selected tab in BottomNavigationBar
+  double totalIncome = 0.0; // Variable to store total income
+  int _selectedIndex = 0; // Tracks the selected tab in BottomNavigationBar
 
   @override
   void initState() {
     super.initState();
-    _loadTotalIncome();
+    _loadTotalIncome(); // Load total income when initializing state
   }
 
+  // Load total income from shared preferences
   Future<void> _loadTotalIncome() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      totalIncome = prefs.getDouble('totalIncome') ?? 0.0;
+      totalIncome = prefs.getDouble('totalIncome') ??
+          0.0; // Default to 0.0 if no value is found
     });
   }
 
+  // Handle tab selection in BottomNavigationBar
   void _onItemTapped(int index) {
     setState(() {
-      _selectedIndex = index;
+      _selectedIndex = index; // Update selected index
     });
 
-    // Navigate to the corresponding page
+    // Navigate to the corresponding page based on selected index
     if (index == 0) {
       Navigator.push(
         context,
@@ -82,11 +85,11 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Personal Finance Manager'),
-        centerTitle: true,
+        centerTitle: true, // Center the title in the app bar
       ),
       body: Column(
         children: [
-          // Top Section for Total Balance (40% height)
+          // Top Section for displaying total balance (40% height)
           Expanded(
             flex: 3,
             child: Padding(
@@ -97,87 +100,101 @@ class _HomePageState extends State<HomePage> {
                 padding: const EdgeInsets.all(16.0),
                 child: Center(
                   child: Text(
-                    '\$$totalIncome',
-                    style: const TextStyle(fontSize: 50, fontWeight: FontWeight.bold),
+                    '\$$totalIncome', // Display total income with dollar sign
+                    style: const TextStyle(
+                        fontSize: 50, fontWeight: FontWeight.bold),
                   ),
                 ),
               ),
             ),
           ),
-          // Middle Section for Details (45% height)
+          // Middle Section for navigational cards (45% height)
           Expanded(
             flex: 4,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: GridView.count(
-                crossAxisCount: 2,
-                mainAxisSpacing: 10,
-                crossAxisSpacing: 10,
+                crossAxisCount: 2, // Set number of columns in the grid
+                mainAxisSpacing: 10, // Vertical spacing between cards
+                crossAxisSpacing: 10, // Horizontal spacing between cards
                 children: [
                   GestureDetector(
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => const IncomePage()),
-                      ).then((_) => _loadTotalIncome());
+                        MaterialPageRoute(
+                            builder: (context) => const IncomePage()),
+                      ).then(
+                          (_) => _loadTotalIncome()); // Reload income on return
                     },
-                    child: _buildCard('Income', Colors.redAccent),
+                    child:
+                        _buildCard('Income', Colors.redAccent), // Income card
                   ),
                   GestureDetector(
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => const SavingsPage()),
+                        MaterialPageRoute(
+                            builder: (context) => const SavingsPage()),
                       );
                     },
-                    child: _buildCard('Savings', Colors.amberAccent),
+                    child: _buildCard(
+                        'Savings', Colors.amberAccent), // Savings card
                   ),
                   GestureDetector(
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => const ExpensesPage()),
+                        MaterialPageRoute(
+                            builder: (context) => const ExpensesPage()),
                       );
                     },
-                    child: _buildCard('Expenses', Colors.orangeAccent),
+                    child: _buildCard(
+                        'Expenses', Colors.orangeAccent), // Expenses card
                   ),
                   GestureDetector(
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => const InvestmentPage()),
+                        MaterialPageRoute(
+                            builder: (context) => const InvestmentPage()),
                       );
                     },
-                    child: _buildCard('Investments', Colors.greenAccent),
+                    child: _buildCard(
+                        'Investments', Colors.greenAccent), // Investments card
                   ),
                 ],
               ),
             ),
           ),
 
-          // Bottom Navigation Bar
+          // Bottom Navigation Bar for navigation between pages
           BottomNavigationBar(
             currentIndex: _selectedIndex, // Highlight selected tab
-            onTap: _onItemTapped, // Handle tap events
+            onTap: _onItemTapped, // Handle tap events to navigate
             type: BottomNavigationBarType.fixed,
-            selectedItemColor: Colors.black,
-            unselectedItemColor: Colors.black54,
+            selectedItemColor: Colors.black, // Color for selected item
+            unselectedItemColor: Colors.black54, // Color for unselected items
             backgroundColor: Colors.white,
             items: const [
               BottomNavigationBarItem(
-                icon: Icon(Icons.attach_money, color: Colors.redAccent),
+                icon: Icon(Icons.attach_money,
+                    color: Colors.redAccent), // Icon for Income
                 label: 'Income',
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.savings, color: Colors.amberAccent),
+                icon: Icon(Icons.savings,
+                    color: Colors.amberAccent), // Icon for Savings
                 label: 'Savings',
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.account_balance_wallet, color: Colors.orangeAccent),
+                icon: Icon(Icons.account_balance_wallet,
+                    color: Colors.orangeAccent), // Icon for Expenses
                 label: 'Expenses',
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.show_chart, color: Colors.greenAccent),
+                icon: Icon(Icons.show_chart,
+                    color: Colors.greenAccent), // Icon for Investments
                 label: 'Investments',
               ),
             ],
@@ -187,16 +204,19 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  // Build a card widget with title and color
   Widget _buildCard(String title, Color color) {
     return Container(
       decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(10.0),
+        color: color, // Set background color of the card
+        borderRadius:
+            BorderRadius.circular(10.0), // Rounded corners for the card
       ),
       child: Center(
         child: Text(
-          title,
-          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black),
+          title, // Display title in the card
+          style: const TextStyle(
+              fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black),
         ),
       ),
     );
