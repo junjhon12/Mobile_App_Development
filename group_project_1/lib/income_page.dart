@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'saving_page.dart';
 import 'expenses_page.dart';
 import 'investment_page.dart';
 
@@ -82,7 +81,6 @@ class _IncomePageState extends State<IncomePage> {
           // Top Section: Display Total Income
           Container(
             color: Colors.redAccent,
-            width: double.infinity,
             padding: const EdgeInsets.all(16.0),
             child: Center(
               child: Text(
@@ -110,15 +108,37 @@ class _IncomePageState extends State<IncomePage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    ElevatedButton.icon(
-                      icon: const Icon(Icons.add),
-                      label: const Text('Add Income'),
-                      onPressed: _addIncome,
+                    // Button for adding income
+                    GestureDetector(
+                      onTap: _addIncome,
+                      child: Container(
+                        padding: const EdgeInsets.all(16.0),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[200],
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        child: const Icon(
+                          Icons.add_circle,
+                          color: Colors.green,
+                          size: 36,
+                        ),
+                      ),
                     ),
-                    ElevatedButton.icon(
-                      icon: const Icon(Icons.remove),
-                      label: const Text('Remove Income'),
-                      onPressed: _removeIncome,
+                    // Button for removing income
+                    GestureDetector(
+                      onTap: _removeIncome,
+                      child: Container(
+                        padding: const EdgeInsets.all(16.0),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[200],
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        child: const Icon(
+                          Icons.remove_circle,
+                          color: Colors.red,
+                          size: 36,
+                        ),
+                      ),
                     ),
                   ],
                 ),

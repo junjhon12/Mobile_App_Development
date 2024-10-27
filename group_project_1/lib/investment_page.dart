@@ -60,7 +60,6 @@ class _InvestmentPageState extends State<InvestmentPage> {
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Column(
               children: [
-                // Input field for amount
                 TextField(
                   controller: _amountController,
                   keyboardType: TextInputType.number,
@@ -70,7 +69,6 @@ class _InvestmentPageState extends State<InvestmentPage> {
                   ),
                 ),
                 const SizedBox(height: 16),
-                // Buttons for adding or removing investments
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
@@ -170,30 +168,12 @@ class _InvestmentPageState extends State<InvestmentPage> {
                 icon: _buildNavIcon(Icons.account_balance_wallet, Colors.orangeAccent, false),
                 label: 'Expenses',
               ),
-              BottomNavigationBarItem(
-                icon: _buildNavIcon(Icons.show_chart, Colors.greenAccent, false),
-                label: 'Investments',
-              ),
-            ],
+          Icon(
+            isPositive ? Icons.add_circle : Icons.remove_circle,
+            color: isPositive ? Colors.green : Colors.red,
           ),
-    );
-  }
-
-  // Function to build individual investment entries
-  Widget _buildInvestmentEntry(String type, double amount) {
-    return ListTile(
-      title: Text(type),
-      trailing: Text(
-        '\$$amount',
-        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ],
       ),
     );
   }
-
-  Widget _buildNavIcon(IconData icon, Color color, bool isSelected) {
-  return Icon(
-    icon,
-    color: isSelected ? color : color.withOpacity(0.5), // Full color when selected, semi-transparent when not
-  );
-}
 }
