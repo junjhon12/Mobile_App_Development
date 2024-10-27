@@ -12,48 +12,85 @@ class InvestmentPage extends StatefulWidget {
 }
 
 class _InvestmentPageState extends State<InvestmentPage> {
-  double totalInvestments = 0.0; // Current investments total
+  double totalInvestments = 0.0;
   final TextEditingController _amountController = TextEditingController();
-  final List<Map<String, dynamic>> investmentEntries = []; // List for investment entries
+  String? _selectedCategory;
+  final List<Map<String, dynamic>> investmentEntries = [];
 
   @override
   void initState() {
     super.initState();
-    _loadTotalInvestments();
+    _loadInvestmentData();
   }
 
-  Future<void> _loadTotalInvestments() async {
+  Future<void> _loadInvestmentData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       totalInvestments = prefs.getDouble('totalInvestments') ?? 0.0;
+      _loadInvestmentEntries(prefs);
     });
   }
 
-  Future<void> _saveTotalInvestments() async {
+  Future<void> _saveInvestmentData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setDouble('totalInvestments', totalInvestments);
+    _saveInvestmentEntries(prefs);
   }
 
-  // Function to add an investment
+  void _loadInvestmentEntries(SharedPreferences prefs) {
+    final entries = prefs.getStringList('investmentEntries') ?? [];
+    setState(() {
+      investmentEntries.clear();
+      investmentEntries.addAll(entries.map((e) => Map<String, dynamic>.from(Uri.decodeComponent(e) as Map)));
+    });
+  }
+
+  void _saveInvestmentEntries(SharedPreferences prefs) {
+    final entries = investmentEntries.map((e) => Uri.encodeComponent(e.toString())).toList();
+    prefs.setStringList('investmentEntries', entries);
+  }
+
   void _addInvestment() {
+    if (_selectedCategory == null) return;
+
     setState(() {
       double amount = double.tryParse(_amountController.text) ?? 0;
       totalInvestments += amount;
-      investmentEntries.add({'title': 'Investment Added', 'amount': amount, 'isPositive': true});
+      investmentEntries.add({
+        'title': 'Investment Added',
+        'category': _selectedCategory!,
+        'amount': amount,
+        'isPositive': true,
+      });
     });
-    _saveTotalInvestments();
+    _saveInvestmentData();
     _amountController.clear();
   }
 
-  // Function to remove an investment
   void _removeInvestment() {
+    if (_selectedCategory == null) return;
+
     setState(() {
       double amount = double.tryParse(_amountController.text) ?? 0;
       totalInvestments -= amount;
-      investmentEntries.add({'title': 'Investment Removed', 'amount': amount, 'isPositive': false});
+      investmentEntries.add({
+        'title': 'Investment Removed',
+        'category': _selectedCategory!,
+        'amount': amount,
+        'isPositive': false,
+      });
     });
-    _saveTotalInvestments();
+    _saveInvestmentData();
     _amountController.clear();
+  }
+
+  void _clearInvestments() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+    setState(() {
+      totalInvestments = 0.0;
+      investmentEntries.clear();
+    });
   }
 
   @override
@@ -62,6 +99,12 @@ class _InvestmentPageState extends State<InvestmentPage> {
       appBar: AppBar(
         title: const Text('Investments'),
         centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.delete),
+            onPressed: _clearInvestments,
+          ),
+        ],
       ),
       body: Column(
         children: [
@@ -84,6 +127,22 @@ class _InvestmentPageState extends State<InvestmentPage> {
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Column(
               children: [
+                // Dropdown to select category
+                DropdownButtonFormField<String>(
+                  value: _selectedCategory,
+                  items: <String>['Stocks', 'Bonds', 'Real Estate', 'Other']
+                      .map((category) => DropdownMenuItem(
+                            value: category,
+                            child: Text(category),
+                          ))
+                      .toList(),
+                  onChanged: (value) => setState(() => _selectedCategory = value),
+                  decoration: const InputDecoration(
+                    labelText: 'Select Investment Type',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 8),
                 TextField(
                   controller: _amountController,
                   keyboardType: TextInputType.number,
@@ -145,6 +204,7 @@ class _InvestmentPageState extends State<InvestmentPage> {
                     entry['title'],
                     entry['amount'],
                     entry['isPositive'],
+                    entry['category'],
                   );
                 },
               ),
@@ -155,29 +215,12 @@ class _InvestmentPageState extends State<InvestmentPage> {
 
       // Bottom Navigation Bar
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 3, // Highlight the Investments tab
+        currentIndex: 3,
         onTap: (index) {
-          if (index == 0) {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const IncomePage()),
-            );
-          } else if (index == 1) {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const SavingsPage()),
-            );
-          } else if (index == 2) {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const ExpensesPage()),
-            );
-          } else if (index == 3) {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const InvestmentPage()),
-            );
-          }
+          if (index == 0) Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const IncomePage()));
+          else if (index == 1) Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const SavingsPage()));
+          else if (index == 2) Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const ExpensesPage()));
+          else if (index == 3) Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const InvestmentPage()));
         },
         type: BottomNavigationBarType.fixed,
         selectedItemColor: const Color.fromARGB(255, 0, 0, 0),
@@ -206,7 +249,7 @@ class _InvestmentPageState extends State<InvestmentPage> {
   }
 
   // Function to build individual investment entry
-  Widget _buildInvestmentEntry(String title, double amount, bool isPositive) {
+  Widget _buildInvestmentEntry(String title, double amount, bool isPositive, String category) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8.0),
       padding: const EdgeInsets.all(8.0),
@@ -217,24 +260,12 @@ class _InvestmentPageState extends State<InvestmentPage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Expanded(
-            child: Text(
-              title,
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-            ),
-          ),
+          Expanded(child: Text('$title - $category', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500))),
           Text(
             '\$${amount.toStringAsFixed(2)}',
-            style: TextStyle(
-              fontSize: 16,
-              color: isPositive ? Colors.green : Colors.red,
-              fontWeight: FontWeight.bold,
-            ),
+            style: TextStyle(fontSize: 16, color: isPositive ? Colors.green : Colors.red, fontWeight: FontWeight.bold),
           ),
-          Icon(
-            isPositive ? Icons.add_circle : Icons.remove_circle,
-            color: isPositive ? Colors.green : Colors.red,
-          ),
+          Icon(isPositive ? Icons.add_circle : Icons.remove_circle, color: isPositive ? Colors.green : Colors.red),
         ],
       ),
     );
@@ -242,9 +273,6 @@ class _InvestmentPageState extends State<InvestmentPage> {
 
   // Function to style bottom navigation icons
   Widget _buildNavIcon(IconData icon, Color color, bool isSelected) {
-    return Icon(
-      icon,
-      color: isSelected ? color : color.withOpacity(0.5),
-    );
+    return Icon(icon, color: isSelected ? color : color.withOpacity(0.5));
   }
 }

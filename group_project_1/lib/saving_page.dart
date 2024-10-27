@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert'; // Import for JSON encoding and decoding
 import 'income_page.dart';
 import 'expenses_page.dart';
 import 'investment_page.dart';
@@ -24,30 +25,44 @@ class _SavingsPageState extends State<SavingsPage> {
     _loadData();
   }
 
+  // Load savings data from SharedPreferences
   Future<void> _loadData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       currentSavings = prefs.getDouble('currentSavings') ?? 2000.0;
       savingsGoal = prefs.getDouble('savingsGoal') ?? 5000.0;
+      // Load entries as JSON string
+      savingsEntries.addAll((prefs.getStringList('savingsEntries') ?? []).map((entry) => Map<String, dynamic>.from(jsonDecode(entry))).toList());
     });
   }
 
+  // Save savings data to SharedPreferences
   Future<void> _saveData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setDouble('currentSavings', currentSavings);
     await prefs.setDouble('savingsGoal', savingsGoal);
+    // Save entries as JSON string
+    List<String> entries = savingsEntries.map((entry) => jsonEncode(entry)).toList();
+    await prefs.setStringList('savingsEntries', entries);
   }
 
+  // Function to add savings
   void _addSavings() {
     setState(() {
       double amount = double.tryParse(_amountController.text) ?? 0;
       currentSavings += amount;
-      savingsEntries.add({'title': 'Savings Added', 'amount': amount, 'isPositive': true});
+      savingsEntries.add({
+        'title': 'Savings Added',
+        'amount': amount,
+        'isPositive': true,
+        'date': DateTime.now().toString(),
+      });
     });
     _saveData();
     _amountController.clear();
   }
 
+  // Function to remove savings with confirmation dialog
   void _removeSavings() {
     showDialog(
       context: context,
@@ -64,7 +79,12 @@ class _SavingsPageState extends State<SavingsPage> {
               setState(() {
                 double amount = double.tryParse(_amountController.text) ?? 0;
                 currentSavings -= amount;
-                savingsEntries.add({'title': 'Savings Removed', 'amount': amount, 'isPositive': false});
+                savingsEntries.add({
+                  'title': 'Savings Removed',
+                  'amount': amount,
+                  'isPositive': false,
+                  'date': DateTime.now().toString(),
+                });
               });
               _saveData();
               _amountController.clear();
@@ -100,7 +120,9 @@ class _SavingsPageState extends State<SavingsPage> {
                   content: TextField(
                     controller: _goalController,
                     keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(labelText: 'Enter new savings goal'),
+                    decoration: const InputDecoration(
+                      labelText: 'Enter new savings goal',
+                    ),
                   ),
                   actions: [
                     TextButton(
@@ -226,7 +248,7 @@ class _SavingsPageState extends State<SavingsPage> {
                 itemCount: savingsEntries.length,
                 itemBuilder: (context, index) {
                   final entry = savingsEntries[index];
-                  return _buildSavingsItem(entry['title'], entry['amount'], entry['isPositive']);
+                  return _buildSavingsItem(entry['title'], entry['amount'], entry['isPositive'], entry['date']);
                 },
               ),
             ),
@@ -262,7 +284,7 @@ class _SavingsPageState extends State<SavingsPage> {
     );
   }
 
-  Widget _buildSavingsItem(String title, double amount, bool isPositive) {
+  Widget _buildSavingsItem(String title, double amount, bool isPositive, String date) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8.0),
       padding: const EdgeInsets.all(8.0),
@@ -270,7 +292,15 @@ class _SavingsPageState extends State<SavingsPage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Expanded(child: Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500))),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+                Text(date, style: const TextStyle(fontSize: 12, color: Colors.black54)),
+              ],
+            ),
+          ),
           Text(
             '\$${amount.toStringAsFixed(2)}',
             style: TextStyle(fontSize: 16, color: isPositive ? Colors.green : Colors.red, fontWeight: FontWeight.bold),

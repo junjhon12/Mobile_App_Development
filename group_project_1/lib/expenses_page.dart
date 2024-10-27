@@ -15,12 +15,15 @@ class _ExpensesPageState extends State<ExpensesPage> {
   double totalExpenses = 0.0; // Current expenses total
   final TextEditingController _amountController = TextEditingController();
   final TextEditingController _categoryController = TextEditingController();
-  final List<Map<String, dynamic>> expenseEntries = []; // List to store expense entries
+  final TextEditingController _goalController = TextEditingController(); // Goal input controller
+  final List<Map<String, dynamic>> expenseEntries = []; // Store expense entries
+  double? expenseGoal; // Expense goal
 
   @override
   void initState() {
     super.initState();
     _loadTotalExpenses();
+    _loadExpenseGoal();
   }
 
   Future<void> _loadTotalExpenses() async {
@@ -35,34 +38,63 @@ class _ExpensesPageState extends State<ExpensesPage> {
     prefs.setDouble('totalExpenses', totalExpenses);
   }
 
-  // Function to add an expense
-  void _addExpense() {
+  Future<void> _loadExpenseGoal() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      double amount = double.tryParse(_amountController.text) ?? 0;
-      String category = _categoryController.text.isNotEmpty ? _categoryController.text : 'General';
-      totalExpenses += amount;
-      expenseEntries.add({'title': category, 'amount': amount, 'isPositive': true});
+      expenseGoal = prefs.getDouble('expenseGoal') ?? 0.0;
     });
-    _saveTotalExpenses();
-    _amountController.clear();
-    _categoryController.clear();
   }
 
-  // Function to remove an expense
+  Future<void> _saveExpenseGoal() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setDouble('expenseGoal', expenseGoal!);
+  }
+
+  // Add an expense and save to shared preferences
+  void _addExpense() {
+    double? amount = double.tryParse(_amountController.text);
+    if (amount != null && _categoryController.text.isNotEmpty) {
+      setState(() {
+        String category = _categoryController.text;
+        totalExpenses += amount;
+        expenseEntries.add({'title': category, 'amount': amount, 'isPositive': false});
+      });
+      _saveTotalExpenses();
+      _amountController.clear();
+      _categoryController.clear();
+    }
+  }
+
+  // Remove an expense and save to shared preferences
   void _removeExpense() {
+    double? amount = double.tryParse(_amountController.text);
+    if (amount != null && _categoryController.text.isNotEmpty) {
+      setState(() {
+        String category = _categoryController.text;
+        totalExpenses -= amount;
+        expenseEntries.add({'title': category, 'amount': amount, 'isPositive': true});
+      });
+      _saveTotalExpenses();
+      _amountController.clear();
+      _categoryController.clear();
+    }
+  }
+
+  // Set a monthly/weekly expense goal
+  void _setGoal() {
     setState(() {
-      double amount = double.tryParse(_amountController.text) ?? 0;
-      String category = _categoryController.text.isNotEmpty ? _categoryController.text : 'General';
-      totalExpenses -= amount;
-      expenseEntries.add({'title': category, 'amount': amount, 'isPositive': false});
+      expenseGoal = double.tryParse(_goalController.text);
+      _saveExpenseGoal();
+      _goalController.clear();
     });
-    _saveTotalExpenses();
-    _amountController.clear();
-    _categoryController.clear();
   }
 
   @override
   Widget build(BuildContext context) {
+    double progress = expenseGoal != null && expenseGoal! > 0
+        ? (totalExpenses / expenseGoal!).clamp(0.0, 1.0)
+        : 0.0;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Expenses'),
@@ -75,20 +107,41 @@ class _ExpensesPageState extends State<ExpensesPage> {
             color: Colors.orangeAccent,
             width: double.infinity,
             padding: const EdgeInsets.all(16.0),
-            child: Center(
-              child: Text(
-                '\$$totalExpenses',
-                style: const TextStyle(
-                  fontSize: 36,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  '\$$totalExpenses',
+                  style: const TextStyle(
+                    fontSize: 36,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
                 ),
-              ),
+                if (expenseGoal != null && expenseGoal! > 0)
+                  Column(
+                    children: [
+                      LinearProgressIndicator(
+                        value: progress,
+                        backgroundColor: Colors.grey[300],
+                        color: Colors.redAccent,
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        '${(progress * 100).toStringAsFixed(1)}% of goal reached',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: progress >= 1.0 ? Colors.red : Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+              ],
             ),
           ),
           const SizedBox(height: 16),
 
-          // Input Form for Adding/Removing Expenses
+          // Input Form for Adding/Removing Expenses and Setting Goal
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Column(
@@ -106,6 +159,15 @@ class _ExpensesPageState extends State<ExpensesPage> {
                   controller: _categoryController,
                   decoration: const InputDecoration(
                     labelText: 'Enter Category (e.g., Food, Transport)',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: _goalController,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    labelText: 'Set Monthly/Weekly Goal',
                     border: OutlineInputBorder(),
                   ),
                 ),
@@ -139,6 +201,20 @@ class _ExpensesPageState extends State<ExpensesPage> {
                         child: const Icon(
                           Icons.remove_circle,
                           color: Colors.red,
+                          size: 36,
+                        ),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: _setGoal,
+                      child: Container(
+                        padding: const EdgeInsets.all(16.0),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[200],
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        child: const Icon(
+                          Icons.track_changes,
                           size: 36,
                         ),
                       ),
@@ -197,8 +273,8 @@ class _ExpensesPageState extends State<ExpensesPage> {
           }
         },
         type: BottomNavigationBarType.fixed,
-        selectedItemColor: const Color.fromARGB(255, 0, 0, 0),
-        unselectedItemColor: const Color.fromARGB(137, 0, 0, 0),
+        selectedItemColor: Colors.black,
+        unselectedItemColor: Colors.black54,
         backgroundColor: Colors.white,
         items: [
           BottomNavigationBarItem(
@@ -222,7 +298,6 @@ class _ExpensesPageState extends State<ExpensesPage> {
     );
   }
 
-  // Function to build individual expense entry
   Widget _buildExpenseEntry(String title, double amount, bool isPositive) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8.0),
