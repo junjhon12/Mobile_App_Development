@@ -4,6 +4,7 @@ import 'expenses_page.dart';
 import 'investment_page.dart';
 import 'saving_page.dart';
 import 'package:intl/intl.dart';
+import 'dart:convert'; // Import this for JSON encoding/decoding
 
 class IncomePage extends StatefulWidget {
   const IncomePage({super.key});
@@ -14,30 +15,48 @@ class IncomePage extends StatefulWidget {
 
 class _IncomePageState extends State<IncomePage> {
   double totalIncome = 0.0; // Current total income
-  final TextEditingController _amountController =
-      TextEditingController(); // Controller for amount input
-  final List<Map<String, dynamic>> incomeEntries =
-      []; // List to store income entries
+  final TextEditingController _amountController = TextEditingController(); // Controller for amount input
+  final List<Map<String, dynamic>> incomeEntries = []; // List to store income entries
 
   @override
   void initState() {
     super.initState();
     _loadTotalIncome(); // Load total income from SharedPreferences when the page initializes
+    _loadIncomeEntries(); // Load income entries from SharedPreferences
   }
 
   // Load total income from SharedPreferences
   Future<void> _loadTotalIncome() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      totalIncome = prefs.getDouble('totalIncome') ??
-          0.0; // Default to 0.0 if no value is found
+      totalIncome = prefs.getDouble('totalIncome') ?? 0.0; // Default to 0.0 if no value is found
     });
+  }
+
+  // Load income entries from SharedPreferences
+  Future<void> _loadIncomeEntries() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? entriesString = prefs.getString('incomeEntries'); // Get the saved string
+    if (entriesString != null) {
+      List<dynamic> entriesList = json.decode(entriesString); // Decode JSON
+      for (var entry in entriesList) {
+        incomeEntries.add(Map<String, dynamic>.from(entry)); // Add to the list
+      }
+      setState(() {}); // Update the state
+    }
   }
 
   // Save the total income to SharedPreferences
   Future<void> _saveTotalIncome() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setDouble('totalIncome', totalIncome);
+  }
+
+  // Save the income entries to SharedPreferences
+  Future<void> _saveIncomeEntries() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String entriesString = json.encode(incomeEntries); // Encode list to JSON
+    await prefs.setString('incomeEntries', entriesString); // Save the JSON string
   }
 
   // Reset total income and clear income entries
@@ -48,18 +67,16 @@ class _IncomePageState extends State<IncomePage> {
       incomeEntries.clear(); // Clear the list of income entries
     });
     await prefs.setDouble('totalIncome', totalIncome); // Save the reset value
+    await prefs.remove('incomeEntries'); // Remove income entries from storage
   }
 
   // Add income to total and income entries
   void _addIncome() {
-    double amount =
-        double.tryParse(_amountController.text) ?? 0; // Parse input amount
+    double amount = double.tryParse(_amountController.text) ?? 0; // Parse input amount
     if (amount <= 0) {
       // Validate that the amount is positive
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content:
-                Text('Please enter a valid amount.')), // Show error message
+        const SnackBar(content: Text('Please enter a valid amount.')), // Show error message
       );
       return;
     }
@@ -74,19 +91,17 @@ class _IncomePageState extends State<IncomePage> {
       });
     });
     _saveTotalIncome(); // Save updated total income
+    _saveIncomeEntries(); // Save income entries
     _amountController.clear(); // Clear input field
   }
 
   // Remove income from total and income entries
   void _removeIncome() {
-    double amount =
-        double.tryParse(_amountController.text) ?? 0; // Parse input amount
+    double amount = double.tryParse(_amountController.text) ?? 0; // Parse input amount
     if (amount <= 0) {
       // Validate that the amount is positive
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content:
-                Text('Please enter a valid amount.')), // Show error message
+        const SnackBar(content: Text('Please enter a valid amount.')), // Show error message
       );
       return;
     }
@@ -101,6 +116,7 @@ class _IncomePageState extends State<IncomePage> {
       });
     });
     _saveTotalIncome(); // Save updated total income
+    _saveIncomeEntries(); // Save income entries
     _amountController.clear(); // Clear input field
   }
 
@@ -112,8 +128,7 @@ class _IncomePageState extends State<IncomePage> {
         centerTitle: true,
         actions: [
           IconButton(
-            icon:
-                const Icon(Icons.refresh), // Refresh icon for resetting income
+            icon: const Icon(Icons.refresh), // Refresh icon for resetting income
             onPressed: _resetTotalIncome, // Reset income on button press
             tooltip: 'Reset Income',
           ),
@@ -123,8 +138,7 @@ class _IncomePageState extends State<IncomePage> {
         children: [
           // Top Section: Display Total Income
           Container(
-            color:
-                Colors.redAccent, // Background color for total income display
+            color: Colors.redAccent, // Background color for total income display
             padding: const EdgeInsets.all(16.0),
             width: double.infinity,
             child: Center(
@@ -209,8 +223,7 @@ class _IncomePageState extends State<IncomePage> {
                   return _buildIncomeItem(
                     entry['title'], // Title of the entry
                     entry['amount'], // Amount of the entry
-                    entry[
-                        'isPositive'], // Indicator if income was added or removed
+                    entry['isPositive'], // Indicator if income was added or removed
                     entry['date'], // Date of the entry
                   );
                 },
@@ -228,27 +241,22 @@ class _IncomePageState extends State<IncomePage> {
           if (index == 0) {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(
-                  builder: (context) => const IncomePage()), // Income page
+              MaterialPageRoute(builder: (context) => const IncomePage()), // Income page
             );
           } else if (index == 1) {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(
-                  builder: (context) => const SavingsPage()), // Savings page
+              MaterialPageRoute(builder: (context) => const SavingsPage()), // Savings page
             );
           } else if (index == 2) {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(
-                  builder: (context) => const ExpensesPage()), // Expenses page
+              MaterialPageRoute(builder: (context) => const ExpensesPage()), // Expenses page
             );
           } else if (index == 3) {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(
-                  builder: (context) =>
-                      const InvestmentPage()), // Investment page
+              MaterialPageRoute(builder: (context) => const InvestmentPage()), // Investment page
             );
           }
         },
@@ -260,71 +268,32 @@ class _IncomePageState extends State<IncomePage> {
         backgroundColor: Colors.white,
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.attach_money, color: Colors.redAccent),
-            label: 'Income', // Label for Income tab
-          ),
+              icon: Icon(Icons.attach_money, color: Colors.redAccent),
+              label: 'Income'),
           BottomNavigationBarItem(
-            icon: Icon(Icons.savings, color: Colors.amberAccent),
-            label: 'Savings', // Label for Savings tab
-          ),
+              icon: Icon(Icons.savings, color: Colors.amberAccent),
+              label: 'Savings'),
           BottomNavigationBarItem(
-            icon:
-                Icon(Icons.account_balance_wallet, color: Colors.orangeAccent),
-            label: 'Expenses', // Label for Expenses tab
-          ),
+              icon: Icon(Icons.account_balance_wallet,
+                  color: Colors.orangeAccent),
+              label: 'Expenses'),
           BottomNavigationBarItem(
-            icon: Icon(Icons.show_chart, color: Colors.greenAccent),
-            label: 'Investments', // Label for Investments tab
-          ),
+              icon: Icon(Icons.show_chart, color: Colors.greenAccent),
+              label: 'Investments'),
         ],
       ),
     );
   }
 
-  // Build the widget for each income entry
-  Widget _buildIncomeItem(
-      String title, double amount, bool isPositive, String date) {
-    return Container(
-      margin: const EdgeInsets.symmetric(
-          vertical: 8.0), // Vertical spacing for entries
-      padding: const EdgeInsets.all(8.0), // Padding inside the entry container
-      decoration: BoxDecoration(
-          color: Colors.grey[200],
-          borderRadius: BorderRadius.circular(8.0)), // Entry container style
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title, // Title of the income entry
-                  style: const TextStyle(
-                      fontSize: 16, fontWeight: FontWeight.w500),
-                ),
-                Text(date,
-                    style: const TextStyle(
-                        color: Colors.grey, fontSize: 12)), // Date of the entry
-              ],
-            ),
-          ),
-          Text(
-            '\$${amount.toStringAsFixed(2)}', // Formatted amount with two decimal places
-            style: TextStyle(
-                fontSize: 16,
-                color: isPositive
-                    ? Colors.green
-                    : Colors.red, // Color based on positive/negative
-                fontWeight: FontWeight.bold),
-          ),
-          Icon(
-            isPositive
-                ? Icons.add_circle
-                : Icons.remove_circle, // Icon based on income type
-            color: isPositive ? Colors.green : Colors.red,
-          ),
-        ],
+  // Widget to build income entry item
+  Widget _buildIncomeItem(String title, double amount, bool isPositive, String date) {
+    return Card(
+      elevation: 2.0, // Shadow elevation
+      margin: const EdgeInsets.symmetric(vertical: 8.0), // Vertical margin
+      child: ListTile(
+        title: Text(title), // Title of the entry
+        subtitle: Text(date), // Date of the entry
+        trailing: Text(isPositive ? '+\$${amount.toStringAsFixed(2)}' : '-\$${amount.toStringAsFixed(2)}'), // Amount with sign
       ),
     );
   }
