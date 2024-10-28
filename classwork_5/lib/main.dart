@@ -4,13 +4,15 @@ import 'package:sqflite/sqflite.dart';
 import 'database_helper.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       title: 'Aquarium',
       home: AquariumScreen(),
     );
@@ -18,6 +20,8 @@ class MyApp extends StatelessWidget {
 }
 
 class AquariumScreen extends StatefulWidget {
+  const AquariumScreen({super.key});
+
   @override
   _AquariumScreenState createState() => _AquariumScreenState();
 }
@@ -77,7 +81,7 @@ class _AquariumScreenState extends State<AquariumScreen> with SingleTickerProvid
       });
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Maximum of 10 fish allowed!')),
+        const SnackBar(content: Text('Maximum of 10 fish allowed!')),
       );
     }
   }
@@ -89,7 +93,7 @@ class _AquariumScreenState extends State<AquariumScreen> with SingleTickerProvid
       });
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('No fish to remove!')),
+        const SnackBar(content: Text('No fish to remove!')),
       );
     }
   }
@@ -101,7 +105,7 @@ class _AquariumScreenState extends State<AquariumScreen> with SingleTickerProvid
       _selectedColor.value,
     );
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Settings saved!')),
+      const SnackBar(content: Text('Settings saved!')),
     );
   }
 
@@ -115,7 +119,7 @@ class _AquariumScreenState extends State<AquariumScreen> with SingleTickerProvid
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Aquarium UI'),
+        title: const Text('Aquarium UI'),
       ),
       body: Center(
         child: Column(
@@ -133,7 +137,7 @@ class _AquariumScreenState extends State<AquariumScreen> with SingleTickerProvid
                 children: fishList.map((fish) => fish.buildFish()).toList(),
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Text('Fish Speed: ${_fishSpeed.toStringAsFixed(1)}x'),
             Slider(
               value: _fishSpeed,
@@ -147,10 +151,10 @@ class _AquariumScreenState extends State<AquariumScreen> with SingleTickerProvid
                 });
               },
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             DropdownButton<Color>(
               value: _selectedColor,
-              items: [
+              items: const [
                 DropdownMenuItem(
                   value: Colors.orange,
                   child: Text('Orange'),
@@ -173,27 +177,27 @@ class _AquariumScreenState extends State<AquariumScreen> with SingleTickerProvid
                   if (newColor != null) _selectedColor = newColor;
                 });
               },
-              hint: Text('Select Color'),
+              hint: const Text('Select Color'),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ElevatedButton(
                   onPressed: _addFish,
-                  child: Text('Add Fish'),
+                  child: const Text('Add Fish'),
                 ),
-                SizedBox(width: 10),
+                const SizedBox(width: 10),
                 ElevatedButton(
                   onPressed: _removeFish,
-                  child: Text('Remove Fish'),
+                  child: const Text('Remove Fish'),
                 ),
               ],
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             ElevatedButton(
               onPressed: _saveSettings,
-              child: Text('Save Settings'),
+              child: const Text('Save Settings'),
             ),
           ],
         ),

@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
 
 void main() {
-  runApp(CardOrganizerApp());
+  runApp(const CardOrganizerApp());
 }
 
 class CardOrganizerApp extends StatelessWidget {
@@ -12,7 +11,7 @@ class CardOrganizerApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       title: 'Card Organizer App',
       home: FolderScreen(),
     );
