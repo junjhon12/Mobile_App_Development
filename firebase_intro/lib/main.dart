@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
     return const MaterialApp(
       // Remove the debug banner
       debugShowCheckedModeBanner: false,
-      title: 'Test',
+      title: 'Product Management',
       home: HomePage(),
     );
   }
@@ -36,9 +36,16 @@ class _HomePageState extends State<HomePage> {
   // text fields' controllers
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
+  final TextEditingController _minPriceController = TextEditingController();
+  final TextEditingController _maxPriceController = TextEditingController();
 
   final CollectionReference _products =
       FirebaseFirestore.instance.collection('products');
+
+  Stream<QuerySnapshot> _currentStream = FirebaseFirestore.instance
+      .collection('products')
+      .snapshots();
 
   Future<void> _createOrUpdate([DocumentSnapshot? documentSnapshot]) async {
     String action = 'create';
@@ -84,10 +91,12 @@ class _HomePageState extends State<HomePage> {
                   double price = double.parse(_priceController.text);
                   if (name.isNotEmpty) {
                     if (action == 'create') {
+                      // Persist a new product to Firestore
                       await _products.add({"name": name, "price": price});
                     }
 
                     if (action == 'update') {
+                      // Update the product
                       await _products.doc(documentSnapshot!.id).update({
                         "name": name,
                         "price": price,
@@ -108,16 +117,20 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  // Deleting a product by id
   Future<void> _deleteProduct(String productId) async {
     try {
+      // Delete the product from Firestore
       await _products.doc(productId).delete();
 
+      // Show confirmation message
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('You have successfully deleted a product'),
         ),
       );
     } catch (e) {
+      // Handle any errors that might occur
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Failed to delete product: $e'),
@@ -126,116 +139,149 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  Stream<QuerySnapshot> _searchProducts(String query) {
+    return FirebaseFirestore.instance
+        .collection('products')
+        .where('name', isGreaterThanOrEqualTo: query)
+        .where('name', isLessThanOrEqualTo: '${query}\uf8ff')
+        .snapshots();
+  }
+
+  Stream<QuerySnapshot> _filterProductsByPrice(
+    double minPrice,
+    double maxPrice,
+  ) {
+    return FirebaseFirestore.instance
+        .collection('products')
+        .where('price', isGreaterThanOrEqualTo: minPrice)
+        .where('price', isLessThanOrEqualTo: maxPrice)
+        .snapshots();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Product Manager'),
+        title: const Text('Product Management'),
         bottom: PreferredSize(
-          preferredSize: Size.fromHeight(80.0),
+          preferredSize: const Size.fromHeight(kToolbarHeight),
           child: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Column(
-              children: [
-                TextField(
-                  controller: _searchController,
-                  decoration: const InputDecoration(
-                    labelText: 'Search products',
-                    prefixIcon: Icon(Icons.search),
-                  ),
-                  onChanged: (value) {
-                    setState(() {
-                      _searchQuery = value.toLowerCase();
-                    });
-                  },
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        controller: _minPriceController,
-                        decoration: const InputDecoration(
-                          labelText: 'Min Price',
-                        ),
-                        keyboardType: TextInputType.number,
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: TextField(
-                        controller: _maxPriceController,
-                        decoration: const InputDecoration(
-                          labelText: 'Max Price',
-                        ),
-                        keyboardType: TextInputType.number,
-                      ),
-                    ),
-                  ],
-                ),
-                ElevatedButton(
-                  onPressed: _applyFilters,
-                  child: const Text('Filter'),
-                ),
-                ElevatedButton(
-                  onPressed: _resetFilters,
-                  child: const Text('Reset'),
-                ),
-              ],
+            child: TextField(
+              controller: _searchController,
+              onChanged: (value) {
+                setState(() {
+                  _currentStream = _searchProducts(value.toLowerCase());
+                });
+              },
+              decoration: const InputDecoration(
+                hintText: 'Search products...',
+                border: OutlineInputBorder(),
+              ),
             ),
           ),
         ),
       ),
-      body: StreamBuilder(
-        stream: _products.snapshots(),
-        builder: (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
-          if (streamSnapshot.hasData) {
-            final filteredDocs = streamSnapshot.data!.docs.where((doc) {
-              final nameMatches = doc['name'].toString().toLowerCase().contains(_searchQuery);
-              final priceMatches = doc['price'] >= _minPrice && doc['price'] <= _maxPrice;
-              return nameMatches && priceMatches;
-            }).toList();
-
-            if (filteredDocs.isEmpty) {
-              return const Center(child: Text('No products found'));
-            }
-
-            return ListView.builder(
-              itemCount: filteredDocs.length,
-              itemBuilder: (context, index) {
-                final DocumentSnapshot documentSnapshot =
-                    streamSnapshot.data!.docs[index];
-                return Card(
-                  margin: const EdgeInsets.all(10),
-                  child: ListTile(
-                    title: Text(documentSnapshot['name']),
-                    subtitle: Text(documentSnapshot['price'].toString()),
-                    trailing: SizedBox(
-                      width: 100,
-                      child: Row(
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.edit),
-                            onPressed: () =>
-                                _createOrUpdate(documentSnapshot),
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.delete),
-                            onPressed: () =>
-                                _deleteProduct(documentSnapshot.id),
-                          ),
-                        ],
-                      ),
-                    ),
+      body: Column(
+        children: [
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: _minPriceController,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    hintText: 'Min Price',
+                    border: OutlineInputBorder(),
                   ),
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: TextField(
+                  controller: _maxPriceController,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    hintText: 'Max Price',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 16),
+              ElevatedButton(
+                onPressed: () {
+                  double minPrice = double.tryParse(_minPriceController.text) ?? 0;
+                  double maxPrice = double.tryParse(_maxPriceController.text) ?? double.infinity;
+                  setState(() {
+                    _currentStream = _filterProductsByPrice(minPrice, maxPrice);
+                  });
+                },
+                child: const Text('Filter'),
+              ),
+              const SizedBox(width: 16),
+              ElevatedButton(
+                onPressed: () {
+                  _minPriceController.clear();
+                  _maxPriceController.clear();
+                  setState(() {
+                    _currentStream = _products.snapshots();
+                  });
+                },
+                child: const Text('Reset'),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Expanded(
+            child: StreamBuilder(
+              stream: _currentStream,
+              builder: (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
+                if (streamSnapshot.hasData) {
+                  final products = streamSnapshot.data!.docs;
+                  if (products.isNotEmpty) {
+                    return ListView.builder(
+                      itemCount: products.length,
+                      itemBuilder: (context, index) {
+                        final DocumentSnapshot documentSnapshot = products[index];
+                        return Card(
+                          margin: const EdgeInsets.all(10),
+                          child: ListTile(
+                            title: Text(documentSnapshot['name']),
+                            subtitle: Text(documentSnapshot['price'].toString()),
+                            trailing: SizedBox(
+                              width: 100,
+                              child: Row(
+                                children: [
+                                  IconButton(
+                                    icon: const Icon(Icons.edit),
+                                    onPressed: () => _createOrUpdate(documentSnapshot),
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(Icons.delete),
+                                    onPressed: () => _deleteProduct(documentSnapshot.id),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  } else {
+                    return const Center(
+                      child: Text('No products found'),
+                    );
+                  }
+                }
+
+                return const Center(
+                  child: CircularProgressIndicator(),
                 );
               },
-            );
-          }
-
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        },
+            ),
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _createOrUpdate(),
