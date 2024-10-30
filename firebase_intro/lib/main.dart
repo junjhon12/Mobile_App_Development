@@ -84,12 +84,10 @@ class _HomePageState extends State<HomePage> {
                   double price = double.parse(_priceController.text);
                   if (name.isNotEmpty) {
                     if (action == 'create') {
-                      // Persist a new product to Firestore
                       await _products.add({"name": name, "price": price});
                     }
 
                     if (action == 'update') {
-                      // Update the product
                       await _products.doc(documentSnapshot!.id).update({
                         "name": name,
                         "price": price,
@@ -110,20 +108,16 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // Deleting a product by id
   Future<void> _deleteProduct(String productId) async {
     try {
-      // Delete the product from Firestore
       await _products.doc(productId).delete();
 
-      // Show confirmation message
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('You have successfully deleted a product'),
         ),
       );
     } catch (e) {
-      // Handle any errors that might occur
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Failed to delete product: $e'),
@@ -136,15 +130,77 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('CRUD operations'),
+        title: const Text('Product Manager'),
+        bottom: PreferredSize(
+          preferredSize: Size.fromHeight(80.0),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              children: [
+                TextField(
+                  controller: _searchController,
+                  decoration: const InputDecoration(
+                    labelText: 'Search products',
+                    prefixIcon: Icon(Icons.search),
+                  ),
+                  onChanged: (value) {
+                    setState(() {
+                      _searchQuery = value.toLowerCase();
+                    });
+                  },
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: _minPriceController,
+                        decoration: const InputDecoration(
+                          labelText: 'Min Price',
+                        ),
+                        keyboardType: TextInputType.number,
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: TextField(
+                        controller: _maxPriceController,
+                        decoration: const InputDecoration(
+                          labelText: 'Max Price',
+                        ),
+                        keyboardType: TextInputType.number,
+                      ),
+                    ),
+                  ],
+                ),
+                ElevatedButton(
+                  onPressed: _applyFilters,
+                  child: const Text('Filter'),
+                ),
+                ElevatedButton(
+                  onPressed: _resetFilters,
+                  child: const Text('Reset'),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
-      // Using StreamBuilder to display all products from Firestore in real-time
       body: StreamBuilder(
         stream: _products.snapshots(),
         builder: (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
           if (streamSnapshot.hasData) {
+            final filteredDocs = streamSnapshot.data!.docs.where((doc) {
+              final nameMatches = doc['name'].toString().toLowerCase().contains(_searchQuery);
+              final priceMatches = doc['price'] >= _minPrice && doc['price'] <= _maxPrice;
+              return nameMatches && priceMatches;
+            }).toList();
+
+            if (filteredDocs.isEmpty) {
+              return const Center(child: Text('No products found'));
+            }
+
             return ListView.builder(
-              itemCount: streamSnapshot.data!.docs.length,
+              itemCount: filteredDocs.length,
               itemBuilder: (context, index) {
                 final DocumentSnapshot documentSnapshot =
                     streamSnapshot.data!.docs[index];
@@ -181,7 +237,6 @@ class _HomePageState extends State<HomePage> {
           );
         },
       ),
-      // Add new product
       floatingActionButton: FloatingActionButton(
         onPressed: () => _createOrUpdate(),
         child: const Icon(Icons.add),
