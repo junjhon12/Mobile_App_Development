@@ -143,7 +143,7 @@ class _HomePageState extends State<HomePage> {
     return FirebaseFirestore.instance
         .collection('products')
         .where('name', isGreaterThanOrEqualTo: query)
-        .where('name', isLessThanOrEqualTo: '${query}\uf8ff')
+        .where('name', isLessThanOrEqualTo: '$query\uf8ff')
         .snapshots();
   }
 
