@@ -1,5 +1,8 @@
+import 'package:class_work6/login_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'nested_task_screen.dart';
 
 class TaskListScreen extends StatefulWidget {
   const TaskListScreen({super.key});
@@ -12,6 +15,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
   final TextEditingController _taskController = TextEditingController();
   final CollectionReference tasksRef =
       FirebaseFirestore.instance.collection('tasks');
+  String _selectedPriority = 'Medium';
 
   @override
   Widget build(BuildContext context) {
@@ -21,8 +25,12 @@ class _TaskListScreenState extends State<TaskListScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
-            onPressed: () {
-              // Handle logout
+            onPressed: () async {
+              await FirebaseAuth.instance.signOut();
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const LoginScreen()),
+              );
             },
           )
         ],
@@ -36,10 +44,22 @@ class _TaskListScreenState extends State<TaskListScreen> {
                 Expanded(
                   child: TextField(
                     controller: _taskController,
-                    decoration: const InputDecoration(
-                      hintText: 'Enter task name',
-                    ),
+                    decoration: const InputDecoration(hintText: 'Enter task name'),
                   ),
+                ),
+                DropdownButton<String>(
+                  value: _selectedPriority,
+                  items: ['High', 'Medium', 'Low']
+                      .map((priority) => DropdownMenuItem(
+                            value: priority,
+                            child: Text(priority),
+                          ))
+                      .toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      _selectedPriority = value!;
+                    });
+                  },
                 ),
                 IconButton(
                   icon: const Icon(Icons.add),
@@ -50,7 +70,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
           ),
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
-              stream: tasksRef.snapshots(),
+              stream: tasksRef.orderBy('priority').snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
@@ -62,6 +82,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
                     final task = tasks[index];
                     return ListTile(
                       title: Text(task['name']),
+                      subtitle: Text('Priority: ${task['priority']}'),
                       leading: Checkbox(
                         value: task['completed'],
                         onChanged: (value) {
@@ -78,6 +99,15 @@ class _TaskListScreenState extends State<TaskListScreen> {
               },
             ),
           ),
+          ElevatedButton(
+            child: const Text('View Nested Tasks'),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const NestedTaskScreen()),
+              );
+            },
+          )
         ],
       ),
     );
@@ -89,6 +119,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
       tasksRef.add({
         'name': taskName,
         'completed': false,
+        'priority': _selectedPriority,
       });
       _taskController.clear();
     }
