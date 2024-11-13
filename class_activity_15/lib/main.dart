@@ -1,20 +1,18 @@
+// lib/main.dart
 import 'package:flutter/material.dart';
+import 'quiz_screen.dart';
 
 void main() {
-  runApp(const MainApp());
+  runApp(MyApp());
 }
 
-class MainApp extends StatelessWidget {
-  const MainApp({super.key});
-
+class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: Text('Hello World!'),
-        ),
-      ),
+    return MaterialApp(
+      title: 'Trivia Quiz App',
+      theme: ThemeData(primarySwatch: Colors.blue),
+      home: QuizScreen(),
     );
   }
 }
