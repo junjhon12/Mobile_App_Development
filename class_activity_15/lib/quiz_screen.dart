@@ -4,6 +4,8 @@ import 'question.dart';
 import 'api_service.dart';
 
 class QuizScreen extends StatefulWidget {
+  const QuizScreen({super.key});
+
   @override
   _QuizScreenState createState() => _QuizScreenState();
 }
@@ -69,7 +71,7 @@ class _QuizScreenState extends State<QuizScreen> {
   @override
   Widget build(BuildContext context) {
     if (_loading) {
-      return Scaffold(
+      return const Scaffold(
         body: Center(child: CircularProgressIndicator()),
       );
     }
@@ -85,7 +87,7 @@ class _QuizScreenState extends State<QuizScreen> {
     final question = _questions[_currentQuestionIndex];
 
     return Scaffold(
-      appBar: AppBar(title: Text('Quiz App')),
+      appBar: AppBar(title: const Text('Quiz App')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -93,16 +95,16 @@ class _QuizScreenState extends State<QuizScreen> {
           children: [
             Text(
               'Question ${_currentQuestionIndex + 1}/${_questions.length}',
-              style: TextStyle(fontSize: 20),
+              style: const TextStyle(fontSize: 20),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Text(
               question.question,
-              style: TextStyle(fontSize: 18),
+              style: const TextStyle(fontSize: 18),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             ...question.options.map((option) => _buildOptionButton(option)),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             if (_answered)
               Text(
                 _feedbackText,
@@ -116,7 +118,7 @@ class _QuizScreenState extends State<QuizScreen> {
             if (_answered)
               ElevatedButton(
                 onPressed: _nextQuestion,
-                child: Text('Next Question'),
+                child: const Text('Next Question'),
               ),
           ],
         ),

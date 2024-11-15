@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -31,17 +30,19 @@ class SplashScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Future.delayed(const Duration(seconds: 3), () {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const LoginPage()),
-      );
+      if (context.mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const LoginPage()),
+        );
+      }
     });
 
     return const Scaffold(
       body: Center(
         child: Text(
           'Chatboards Splash Page',
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.blue),
         ),
       ),
     );
@@ -67,7 +68,7 @@ class _LoginPageState extends State<LoginPage> {
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
-      if (userCredential.user != null) {
+      if (userCredential.user != null && context.mounted) {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => MessageBoardPage()),
@@ -83,21 +84,41 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Login')),
+      appBar: AppBar(title: const Text('Login'), backgroundColor: Colors.blue),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
             TextField(
               controller: _emailController,
-              decoration: const InputDecoration(labelText: 'Email'),
+              decoration: InputDecoration(
+                labelText: 'Email',
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                filled: true,
+                fillColor: Colors.grey[200],
+              ),
             ),
+            const SizedBox(height: 16),
             TextField(
               controller: _passwordController,
-              decoration: const InputDecoration(labelText: 'Password'),
+              decoration: InputDecoration(
+                labelText: 'Password',
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                filled: true,
+                fillColor: Colors.grey[200],
+              ),
               obscureText: true,
             ),
-            ElevatedButton(onPressed: _login, child: const Text('Login')),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: _login,
+              style: ElevatedButton.styleFrom(
+                minimumSize: Size(double.infinity, 50), backgroundColor: Colors.blue,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              ),
+              child: const Text('Login'),
+            ),
+            const SizedBox(height: 16),
             TextButton(
               onPressed: () {
                 Navigator.push(
@@ -146,10 +167,12 @@ class _RegistrationPageState extends State<RegistrationPage> {
           'registrationDateTime': DateTime.now(),
         });
 
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => MessageBoardPage()),
-        );
+        if (context.mounted) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => MessageBoardPage()),
+          );
+        }
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -161,29 +184,60 @@ class _RegistrationPageState extends State<RegistrationPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Register')),
+      appBar: AppBar(title: const Text('Register'), backgroundColor: Colors.blue),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
             TextField(
               controller: _firstNameController,
-              decoration: const InputDecoration(labelText: 'First Name'),
+              decoration: InputDecoration(
+                labelText: 'First Name',
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                filled: true,
+                fillColor: Colors.grey[200],
+              ),
             ),
+            const SizedBox(height: 16),
             TextField(
               controller: _lastNameController,
-              decoration: const InputDecoration(labelText: 'Last Name'),
+              decoration: InputDecoration(
+                labelText: 'Last Name',
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                filled: true,
+                fillColor: Colors.grey[200],
+              ),
             ),
+            const SizedBox(height: 16),
             TextField(
               controller: _emailController,
-              decoration: const InputDecoration(labelText: 'Email'),
+              decoration: InputDecoration(
+                labelText: 'Email',
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                filled: true,
+                fillColor: Colors.grey[200],
+              ),
             ),
+            const SizedBox(height: 16),
             TextField(
               controller: _passwordController,
-              decoration: const InputDecoration(labelText: 'Password'),
+              decoration: InputDecoration(
+                labelText: 'Password',
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                filled: true,
+                fillColor: Colors.grey[200],
+              ),
               obscureText: true,
             ),
-            ElevatedButton(onPressed: _register, child: const Text('Register')),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: _register,
+              style: ElevatedButton.styleFrom(
+                minimumSize: Size(double.infinity, 50), backgroundColor: Colors.blue,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              ),
+              child: const Text('Register'),
+            ),
           ],
         ),
       ),
@@ -193,37 +247,40 @@ class _RegistrationPageState extends State<RegistrationPage> {
 
 // Message Board Page
 class MessageBoardPage extends StatelessWidget {
-  final List<Map<String, String>> boards = [
-    {'name': 'Board 1', 'icon': '📚'},
-    {'name': 'Board 2', 'icon': '🎨'},
-    {'name': 'Board 3', 'icon': '🗣️'},
+  final List<Map<String, dynamic>> boards = [
+    {'name': 'Board 1', 'icon': Icons.book},
+    {'name': 'Board 2', 'icon': Icons.palette},
+    {'name': 'Board 3', 'icon': Icons.forum},
   ];
 
-  const MessageBoardPage({super.key});
+  MessageBoardPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Message Boards')),
+      appBar: AppBar(title: const Text('Message Boards'), backgroundColor: Colors.blue),
       drawer: Drawer(
         child: ListView(
           children: [
             ListTile(
               title: const Text('Message Boards'),
               onTap: () {
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MessageBoardPage()));
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (context) => MessageBoardPage()));
               },
             ),
             ListTile(
               title: const Text('Profile'),
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfilePage()));
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => const ProfilePage()));
               },
             ),
             ListTile(
               title: const Text('Settings'),
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => const SettingsPage()));
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => const SettingsPage()));
               },
             ),
           ],
@@ -232,17 +289,21 @@ class MessageBoardPage extends StatelessWidget {
       body: ListView.builder(
         itemCount: boards.length,
         itemBuilder: (context, index) {
-          return ListTile(
-            leading: Image.asset(boards[index]['icon']!),
-            title: Text(boards[index]['name']!),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ChatWindow(boardName: boards[index]['name']!),
-                ),
-              );
-            },
+          return Card(
+            margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+            elevation: 4,
+            child: ListTile(
+              leading: Icon(boards[index]['icon']),
+              title: Text(boards[index]['name']!),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ChatWindow(boardName: boards[index]['name']!),
+                  ),
+                );
+              },
+            ),
           );
         },
       ),
@@ -251,42 +312,100 @@ class MessageBoardPage extends StatelessWidget {
 }
 
 // Chat Window
-class ChatWindow extends StatelessWidget {
+class ChatWindow extends StatefulWidget {
   final String boardName;
 
   const ChatWindow({super.key, required this.boardName});
 
   @override
+  _ChatWindowState createState() => _ChatWindowState();
+}
+
+class _ChatWindowState extends State<ChatWindow> {
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final TextEditingController _messageController = TextEditingController();
+
+  void _sendMessage() async {
+    if (_messageController.text.isNotEmpty) {
+      try {
+        await _firestore.collection('messageBoards')
+            .doc(widget.boardName)
+            .collection('messages')
+            .add({
+          'username': FirebaseAuth.instance.currentUser?.email ?? 'Anonymous',
+          'text': _messageController.text.trim(),
+          'datetime': FieldValue.serverTimestamp(),
+        });
+
+        _messageController.clear();
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to send message: $e')),
+        );
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(boardName)),
-      body: StreamBuilder(
-        stream: FirebaseFirestore.instance
-            .collection('messageBoards')
-            .doc(boardName)
-            .collection('messages')
-            .orderBy('datetime')
-            .snapshots(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-            return const Center(child: Text('No messages yet.'));
-          }
-          final messages = snapshot.data!.docs;
-          return ListView.builder(
-            itemCount: messages.length,
-            itemBuilder: (context, index) {
-              var message = messages[index];
-              return ListTile(
-                title: Text(message['username']),
-                subtitle: Text(message['text']),
-                trailing: Text(message['datetime'].toDate().toString()),
-              );
-            },
-          );
-        },
+      appBar: AppBar(title: Text(widget.boardName), backgroundColor: Colors.blue),
+      body: Column(
+        children: [
+          Expanded(
+            child: StreamBuilder<QuerySnapshot>(
+              stream: _firestore.collection('messageBoards')
+                  .doc(widget.boardName)
+                  .collection('messages')
+                  .orderBy('datetime')
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                if (snapshot.hasError) {
+                  return const Center(child: Text('Error loading messages.'));
+                }
+                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                  return const Center(child: Text('No messages yet.'));
+                }
+                final messages = snapshot.data!.docs;
+                return ListView.builder(
+                  itemCount: messages.length,
+                  itemBuilder: (context, index) {
+                    var message = messages[index];
+                    return ListTile(
+                      title: Text(message['username']),
+                      subtitle: Text(message['text']),
+                      trailing: Text((message['datetime'] as Timestamp).toDate().toString()),
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _messageController,
+                    decoration: const InputDecoration(
+                      hintText: 'Enter message',
+                      border: OutlineInputBorder(),
+                      contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+                    ),
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.send),
+                  onPressed: _sendMessage,
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -299,8 +418,8 @@ class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Profile')),
-      body: const Center(child: Text('Profile Page - Edit user details here.')),
+      appBar: AppBar(title: const Text('Profile'), backgroundColor: Colors.blue),
+      body: Center(child: Text('User Profile')),
     );
   }
 }
@@ -312,19 +431,8 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Settings')),
-      body: Center(
-        child: ElevatedButton(
-          onPressed: () async {
-            await FirebaseAuth.instance.signOut();
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const LoginPage()),
-            );
-          },
-          child: const Text('Logout'),
-        ),
-      ),
+      appBar: AppBar(title: const Text('Settings'), backgroundColor: Colors.blue),
+      body: Center(child: Text('Settings')),
     );
   }
 }
