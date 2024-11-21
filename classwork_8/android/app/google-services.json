@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "222273734663",
+    "project_id": "classwork8-9a498",
+    "storage_bucket": "classwork8-9a498.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:222273734663:android:82ba309e0b042fd8a8c2a2",
+        "android_client_info": {
+          "package_name": "com.example.classwork"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDeLpRm-Jwj--vn3w_LUEZjIAJXtooqDOU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
