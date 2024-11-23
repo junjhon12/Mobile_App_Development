@@ -3,18 +3,20 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-FlutterLocalNotificationsPlugin();
+    FlutterLocalNotificationsPlugin();
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   const AndroidInitializationSettings initializationSettingsAndroid =
-  AndroidInitializationSettings('@mipmap/ic_launcher');
+      AndroidInitializationSettings('@mipmap/ic_launcher');
 
   const InitializationSettings initializationSettings =
-  InitializationSettings(android: initializationSettingsAndroid);
+      InitializationSettings(android: initializationSettingsAndroid);
 
   await flutterLocalNotificationsPlugin.initialize(initializationSettings);
 
@@ -45,6 +47,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
   String _weatherInfo = "";
   List<Map<String, dynamic>> _forecastInfo = [];
   final String apiKey = "56a7f11b63575f9939d2ff1f63603240";
+  File? _backgroundImage;
 
   // Fetch current weather
   Future<void> _fetchWeather() async {
@@ -63,36 +66,14 @@ class _WeatherScreenState extends State<WeatherScreen> {
       final data = json.decode(response.body);
       setState(() {
         _weatherInfo =
-        'Temp: ${data['main']['temp']}°C, ${data['weather'][0]['description']}';
+            'Temp: ${data['main']['temp']}°C, ${data['weather'][0]['description']}';
+        _changeBackgroundBasedOnWeather(data['weather'][0]['description']);
       });
       await _checkForAlerts(data);
     } else {
       setState(() {
         _weatherInfo = "Failed to load weather data.";
       });
-    }
-  }
-
-  // Check for alerts based on user preferences
-  Future<void> _checkForAlerts(Map<String, dynamic> weatherData) async {
-    final preferences = await loadPreferences();
-    final description = weatherData['weather'][0]['description'].toLowerCase();
-    final temp = weatherData['main']['temp'];
-
-    if (preferences.contains('Rain') && description.contains('rain')) {
-      await showNotification('Weather Alert', 'It\'s going to rain today!');
-    }
-
-    if (preferences.contains('Snow') && description.contains('snow')) {
-      await showNotification('Weather Alert', 'Snowfall expected!');
-    }
-
-    if (preferences.contains('Extreme Heat') && temp > 35) {
-      await showNotification('Weather Alert', 'Extreme heat warning!');
-    }
-
-    if (preferences.contains('Cold') && temp < 5) {
-      await showNotification('Weather Alert', 'Cold temperatures expected!');
     }
   }
 
@@ -152,6 +133,41 @@ class _WeatherScreenState extends State<WeatherScreen> {
     }
   }
 
+  // Change background based on weather
+  void _changeBackgroundBasedOnWeather(String weatherDescription) {
+    if (_backgroundImage == null) {
+      if (weatherDescription.contains("clear") || weatherDescription.contains("sunny")) {
+        setState(() {
+          _backgroundImage = null; // Reset to default background or sunny theme
+        });
+      } else if (weatherDescription.contains("rain")) {
+        setState(() {
+          _backgroundImage = null; // Set a rainy day theme
+        });
+      } else if (weatherDescription.contains("snow")) {
+        setState(() {
+          _backgroundImage = null; // Set a snowy day theme
+        });
+      } else {
+        setState(() {
+          _backgroundImage = null; // Default background for other weather types
+        });
+      }
+    }
+  }
+
+  // Allow user to upload custom background
+  Future<void> _uploadCustomBackground() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      setState(() {
+        _backgroundImage = File(pickedFile.path);
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -201,29 +217,45 @@ class _WeatherScreenState extends State<WeatherScreen> {
                     ),
                   ),
                   const SizedBox(height: 5),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.5,
-                    child: ElevatedButton(
-                      onPressed: _fetchWeather,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.black,
-                        foregroundColor: Colors.white,
-                        textStyle: const TextStyle(fontSize: 15),
+                  Expanded(
+                    child: SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.5,
+                      child: ElevatedButton(
+                        onPressed: _fetchWeather,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.black,
+                          foregroundColor: Colors.white,
+                          textStyle: const TextStyle(fontSize: 15),
+                        ),
+                        child: const Text('Fetch Weather'),
                       ),
-                      child: const Text('Fetch Weather'),
                     ),
                   ),
                   const SizedBox(height: 5),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.5,
+                  Expanded(
+                    child: SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.5,
+                      child: ElevatedButton(
+                        onPressed: _fetchForecast,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.black,
+                          foregroundColor: Colors.white,
+                          textStyle: const TextStyle(fontSize: 15),
+                        ),
+                        child: const Text('7-Day Forecast'),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 5),
+                  Expanded(
                     child: ElevatedButton(
-                      onPressed: _fetchForecast,
+                      onPressed: _uploadCustomBackground,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.black,
                         foregroundColor: Colors.white,
                         textStyle: const TextStyle(fontSize: 15),
                       ),
-                      child: const Text('7-Day Forecast'),
+                      child: const Text('Upload Custom Background'),
                     ),
                   ),
                 ],
@@ -234,6 +266,15 @@ class _WeatherScreenState extends State<WeatherScreen> {
               _weatherInfo,
               style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
+            const SizedBox(height: 20),
+            _backgroundImage == null
+                ? Container() // Add default background if no custom background is uploaded
+                : Image.file(
+                    _backgroundImage!,
+                    fit: BoxFit.cover,
+                    height: MediaQuery.of(context).size.height,
+                    width: MediaQuery.of(context).size.width,
+                  ),
             const SizedBox(height: 20),
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
@@ -270,82 +311,47 @@ class _WeatherScreenState extends State<WeatherScreen> {
   }
 }
 
-class PreferencesScreen extends StatefulWidget {
+class _checkForAlerts {
+  _checkForAlerts(data);
+
+  static Future<void> checkWeatherAlerts(Map<String, dynamic> weatherData) async {
+    final prefs = await SharedPreferences.getInstance();
+    final String lastChecked = prefs.getString('lastChecked') ?? '';
+    final weatherDescription = weatherData['weather'][0]['description'];
+
+    if (lastChecked != weatherDescription) {
+      final androidDetails = AndroidNotificationDetails(
+        'channel_id',
+        'Weather Alerts',
+        channelDescription: 'Weather Notifications',
+        importance: Importance.high,
+        priority: Priority.high,
+      );
+
+      var notificationDetails = NotificationDetails(android: androidDetails);
+
+      await flutterLocalNotificationsPlugin.show(
+        0,
+        'Weather Alert!',
+        'Current Weather: $weatherDescription',
+        notificationDetails,
+      );
+
+      await prefs.setString('lastChecked', weatherDescription);
+    }
+  }
+}
+
+class PreferencesScreen extends StatelessWidget {
   const PreferencesScreen({super.key});
 
   @override
-  _PreferencesScreenState createState() => _PreferencesScreenState();
-}
-
-class _PreferencesScreenState extends State<PreferencesScreen> {
-  List<String> _selectedConditions = [];
-
-  @override
-  void initState() {
-    super.initState();
-    loadPreferences().then((value) {
-      setState(() {
-        _selectedConditions = value;
-      });
-    });
-  }
-
-  void _toggleCondition(String condition) {
-    setState(() {
-      if (_selectedConditions.contains(condition)) {
-        _selectedConditions.remove(condition);
-      } else {
-        _selectedConditions.add(condition);
-      }
-      savePreferences(_selectedConditions);
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
-    const conditions = ['Rain', 'Snow', 'Extreme Heat', 'Cold'];
-
     return Scaffold(
-      appBar: AppBar(title: const Text('Set Weather Alerts')),
-      body: ListView(
-        children: conditions.map((condition) {
-          return CheckboxListTile(
-            title: Text(condition),
-            value: _selectedConditions.contains(condition),
-            onChanged: (value) => _toggleCondition(condition),
-          );
-        }).toList(),
+      appBar: AppBar(
+        title: const Text("Preferences"),
       ),
+      body: const Center(child: Text('Preferences screen')),
     );
   }
-}
-
-Future<void> savePreferences(List<String> conditions) async {
-  final prefs = await SharedPreferences.getInstance();
-  prefs.setStringList('weather_conditions', conditions);
-}
-
-Future<List<String>> loadPreferences() async {
-  final prefs = await SharedPreferences.getInstance();
-  return prefs.getStringList('weather_conditions') ?? [];
-}
-
-Future<void> showNotification(String title, String body) async {
-  const AndroidNotificationDetails androidPlatformChannelSpecifics =
-  AndroidNotificationDetails(
-    'weather_alerts', // Channel ID
-    'Weather Alerts', // Channel Name
-    importance: Importance.high,
-    priority: Priority.high,
-  );
-
-  const NotificationDetails platformChannelSpecifics =
-  NotificationDetails(android: androidPlatformChannelSpecifics);
-
-  await flutterLocalNotificationsPlugin.show(
-    0, // Notification ID
-    title,
-    body,
-    platformChannelSpecifics,
-  );
 }
