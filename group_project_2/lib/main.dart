@@ -1,8 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
-void main() {
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+FlutterLocalNotificationsPlugin();
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  const AndroidInitializationSettings initializationSettingsAndroid =
+  AndroidInitializationSettings('@mipmap/ic_launcher');
+
+  const InitializationSettings initializationSettings =
+  InitializationSettings(android: initializationSettingsAndroid);
+
+  await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+
   runApp(const weatherApp());
 }
 
@@ -11,9 +26,9 @@ class weatherApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: const WeatherScreen(),
+      home: WeatherScreen(),
     );
   }
 }
@@ -31,7 +46,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
   List<Map<String, dynamic>> _forecastInfo = [];
   final String apiKey = "56a7f11b63575f9939d2ff1f63603240";
 
-  // Fetch current weather for a given city
+  // Fetch current weather
   Future<void> _fetchWeather() async {
     final city = _cityController.text;
     if (city.isEmpty) {
@@ -48,8 +63,9 @@ class _WeatherScreenState extends State<WeatherScreen> {
       final data = json.decode(response.body);
       setState(() {
         _weatherInfo =
-            'Temp: ${data['main']['temp']}°C, ${data['weather'][0]['description']}';
+        'Temp: ${data['main']['temp']}°C, ${data['weather'][0]['description']}';
       });
+      await _checkForAlerts(data);
     } else {
       setState(() {
         _weatherInfo = "Failed to load weather data.";
@@ -57,7 +73,30 @@ class _WeatherScreenState extends State<WeatherScreen> {
     }
   }
 
-  // Fetch 7-day weather forecast for a given city
+  // Check for alerts based on user preferences
+  Future<void> _checkForAlerts(Map<String, dynamic> weatherData) async {
+    final preferences = await loadPreferences();
+    final description = weatherData['weather'][0]['description'].toLowerCase();
+    final temp = weatherData['main']['temp'];
+
+    if (preferences.contains('Rain') && description.contains('rain')) {
+      await showNotification('Weather Alert', 'It\'s going to rain today!');
+    }
+
+    if (preferences.contains('Snow') && description.contains('snow')) {
+      await showNotification('Weather Alert', 'Snowfall expected!');
+    }
+
+    if (preferences.contains('Extreme Heat') && temp > 35) {
+      await showNotification('Weather Alert', 'Extreme heat warning!');
+    }
+
+    if (preferences.contains('Cold') && temp < 5) {
+      await showNotification('Weather Alert', 'Cold temperatures expected!');
+    }
+  }
+
+  // Fetch 7-day forecast
   Future<void> _fetchForecast() async {
     final city = _cityController.text;
     if (city.isEmpty) {
@@ -74,20 +113,14 @@ class _WeatherScreenState extends State<WeatherScreen> {
       final data = json.decode(response.body);
       setState(() {
         _forecastInfo = [];
-        // Get the current date
-        final currentDate = DateTime.now();
-
-        // Loop through the forecast data and filter out the current day
         for (var day in data['list']) {
           final date = DateTime.fromMillisecondsSinceEpoch(day['dt'] * 1000);
-          if (date.day != currentDate.day) {  // Skip current day
-            final dayOfWeek = _getDayOfWeek(date.weekday);
-            _forecastInfo.add({
-              'day': dayOfWeek,
-              'temp': day['main']['temp'],
-              'description': day['weather'][0]['description'],
-            });
-          }
+          final dayOfWeek = _getDayOfWeek(date.weekday);
+          _forecastInfo.add({
+            'day': dayOfWeek,
+            'temp': day['main']['temp'],
+            'description': day['weather'][0]['description'],
+          });
         }
       });
     } else {
@@ -97,7 +130,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
     }
   }
 
-  // Convert weekday number to day of the week string
+  // Get day of the week
   String _getDayOfWeek(int weekday) {
     switch (weekday) {
       case 1:
@@ -124,6 +157,17 @@ class _WeatherScreenState extends State<WeatherScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Center(child: Text('Weather App')),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => PreferencesScreen()),
+              );
+            },
+          ),
+        ],
       ),
       body: Center(
         child: Column(
@@ -166,10 +210,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
                         foregroundColor: Colors.white,
                         textStyle: const TextStyle(fontSize: 15),
                       ),
-                      child: const Text(
-                        'Fetch Weather',
-                        style: TextStyle(color: Colors.white),
-                      ),
+                      child: const Text('Fetch Weather'),
                     ),
                   ),
                   const SizedBox(height: 5),
@@ -182,10 +223,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
                         foregroundColor: Colors.white,
                         textStyle: const TextStyle(fontSize: 15),
                       ),
-                      child: const Text(
-                        '7-Day Forecast',
-                        style: TextStyle(color: Colors.white),
-                      ),
+                      child: const Text('7-Day Forecast'),
                     ),
                   ),
                 ],
@@ -197,7 +235,6 @@ class _WeatherScreenState extends State<WeatherScreen> {
               style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 20),
-            // Display the 7-day forecast horizontally
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
@@ -213,18 +250,13 @@ class _WeatherScreenState extends State<WeatherScreen> {
                       children: [
                         Text(
                           forecast['day'],
-                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          style: const TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(height: 5),
-                        Text(
-                          '${forecast['temp']}°C',
-                          style: const TextStyle(fontSize: 16),
-                        ),
+                        Text('${forecast['temp']}°C'),
                         const SizedBox(height: 5),
-                        Text(
-                          forecast['description'],
-                          style: const TextStyle(fontSize: 14),
-                        ),
+                        Text(forecast['description']),
                       ],
                     ),
                   );
@@ -236,4 +268,84 @@ class _WeatherScreenState extends State<WeatherScreen> {
       ),
     );
   }
+}
+
+class PreferencesScreen extends StatefulWidget {
+  const PreferencesScreen({super.key});
+
+  @override
+  _PreferencesScreenState createState() => _PreferencesScreenState();
+}
+
+class _PreferencesScreenState extends State<PreferencesScreen> {
+  List<String> _selectedConditions = [];
+
+  @override
+  void initState() {
+    super.initState();
+    loadPreferences().then((value) {
+      setState(() {
+        _selectedConditions = value;
+      });
+    });
+  }
+
+  void _toggleCondition(String condition) {
+    setState(() {
+      if (_selectedConditions.contains(condition)) {
+        _selectedConditions.remove(condition);
+      } else {
+        _selectedConditions.add(condition);
+      }
+      savePreferences(_selectedConditions);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    const conditions = ['Rain', 'Snow', 'Extreme Heat', 'Cold'];
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('Set Weather Alerts')),
+      body: ListView(
+        children: conditions.map((condition) {
+          return CheckboxListTile(
+            title: Text(condition),
+            value: _selectedConditions.contains(condition),
+            onChanged: (value) => _toggleCondition(condition),
+          );
+        }).toList(),
+      ),
+    );
+  }
+}
+
+Future<void> savePreferences(List<String> conditions) async {
+  final prefs = await SharedPreferences.getInstance();
+  prefs.setStringList('weather_conditions', conditions);
+}
+
+Future<List<String>> loadPreferences() async {
+  final prefs = await SharedPreferences.getInstance();
+  return prefs.getStringList('weather_conditions') ?? [];
+}
+
+Future<void> showNotification(String title, String body) async {
+  const AndroidNotificationDetails androidPlatformChannelSpecifics =
+  AndroidNotificationDetails(
+    'weather_alerts', // Channel ID
+    'Weather Alerts', // Channel Name
+    importance: Importance.high,
+    priority: Priority.high,
+  );
+
+  const NotificationDetails platformChannelSpecifics =
+  NotificationDetails(android: androidPlatformChannelSpecifics);
+
+  await flutterLocalNotificationsPlugin.show(
+    0, // Notification ID
+    title,
+    body,
+    platformChannelSpecifics,
+  );
 }
