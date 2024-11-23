@@ -29,7 +29,6 @@ class _WeatherScreenState extends State<WeatherScreen> {
   final TextEditingController _cityController = TextEditingController();
   String _weatherInfo = "";
   List<Map<String, dynamic>> _forecastInfo = [];
-
   final String apiKey = "56a7f11b63575f9939d2ff1f63603240";
 
   // Fetch current weather for a given city
