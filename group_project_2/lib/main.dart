@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
@@ -20,11 +21,11 @@ Future<void> main() async {
 
   await flutterLocalNotificationsPlugin.initialize(initializationSettings);
 
-  runApp(const weatherApp());
+  runApp(const WeatherApp());
 }
 
-class weatherApp extends StatelessWidget {
-  const weatherApp({super.key});
+class WeatherApp extends StatelessWidget {
+  const WeatherApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -67,9 +68,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
       setState(() {
         _weatherInfo =
             'Temp: ${data['main']['temp']}°C, ${data['weather'][0]['description']}';
-        _changeBackgroundBasedOnWeather(data['weather'][0]['description']);
       });
-      await _checkForAlerts(data);
     } else {
       setState(() {
         _weatherInfo = "Failed to load weather data.";
@@ -77,89 +76,9 @@ class _WeatherScreenState extends State<WeatherScreen> {
     }
   }
 
-  // Fetch 7-day forecast
-  Future<void> _fetchForecast() async {
-    final city = _cityController.text;
-    if (city.isEmpty) {
-      setState(() {
-        _forecastInfo = [];
-      });
-      return;
-    }
-
-    final response = await http.get(Uri.parse(
-        'https://api.openweathermap.org/data/2.5/forecast?q=$city&cnt=7&appid=$apiKey&units=metric'));
-
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      setState(() {
-        _forecastInfo = [];
-        for (var day in data['list']) {
-          final date = DateTime.fromMillisecondsSinceEpoch(day['dt'] * 1000);
-          final dayOfWeek = _getDayOfWeek(date.weekday);
-          _forecastInfo.add({
-            'day': dayOfWeek,
-            'temp': day['main']['temp'],
-            'description': day['weather'][0]['description'],
-          });
-        }
-      });
-    } else {
-      setState(() {
-        _forecastInfo = [];
-      });
-    }
-  }
-
-  // Get day of the week
-  String _getDayOfWeek(int weekday) {
-    switch (weekday) {
-      case 1:
-        return 'Mon';
-      case 2:
-        return 'Tue';
-      case 3:
-        return 'Wed';
-      case 4:
-        return 'Thu';
-      case 5:
-        return 'Fri';
-      case 6:
-        return 'Sat';
-      case 7:
-        return 'Sun';
-      default:
-        return '';
-    }
-  }
-
-  // Change background based on weather
-  void _changeBackgroundBasedOnWeather(String weatherDescription) {
-    if (_backgroundImage == null) {
-      if (weatherDescription.contains("clear") || weatherDescription.contains("sunny")) {
-        setState(() {
-          _backgroundImage = null; // Reset to default background or sunny theme
-        });
-      } else if (weatherDescription.contains("rain")) {
-        setState(() {
-          _backgroundImage = null; // Set a rainy day theme
-        });
-      } else if (weatherDescription.contains("snow")) {
-        setState(() {
-          _backgroundImage = null; // Set a snowy day theme
-        });
-      } else {
-        setState(() {
-          _backgroundImage = null; // Default background for other weather types
-        });
-      }
-    }
-  }
-
-  // Allow user to upload custom background
   Future<void> _uploadCustomBackground() async {
-    final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    final pickedFile =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
 
     if (pickedFile != null) {
       setState(() {
@@ -179,129 +98,233 @@ class _WeatherScreenState extends State<WeatherScreen> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => PreferencesScreen()),
+                MaterialPageRoute(builder: (context) => const PreferencesScreen()),
               );
             },
           ),
         ],
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const SizedBox(height: 5),
-            Container(
-              height: MediaQuery.of(context).size.height * 0.3,
-              width: MediaQuery.of(context).size.width * 0.6,
-              padding: const EdgeInsets.all(5),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
+      body: Stack(
+        children: [
+          if (_backgroundImage != null)
+            Positioned.fill(
+              child: Image.file(
+                _backgroundImage!,
+                fit: BoxFit.cover,
               ),
+            ),
+          Center(
+            child: SingleChildScrollView(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text(
-                    'City name',
-                    style: TextStyle(color: Colors.black, fontSize: 20),
-                  ),
-                  const SizedBox(height: 5),
-                  TextField(
-                    controller: _cityController,
-                    decoration: InputDecoration(
-                      fillColor: Colors.white,
-                      filled: true,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      hintText: 'Enter your city name',
-                    ),
-                  ),
-                  const SizedBox(height: 5),
-                  Expanded(
-                    child: SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.5,
-                      child: ElevatedButton(
-                        onPressed: _fetchWeather,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.black,
-                          foregroundColor: Colors.white,
-                          textStyle: const TextStyle(fontSize: 15),
+                  const SizedBox(height: 10),
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    child: Column(
+                      children: [
+                        const Text(
+                          'City name',
+                          style: TextStyle(color: Colors.black, fontSize: 20),
                         ),
-                        child: const Text('Fetch Weather'),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 5),
-                  Expanded(
-                    child: SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.5,
-                      child: ElevatedButton(
-                        onPressed: _fetchForecast,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.black,
-                          foregroundColor: Colors.white,
-                          textStyle: const TextStyle(fontSize: 15),
+                        const SizedBox(height: 5),
+                        TextField(
+                          controller: _cityController,
+                          decoration: InputDecoration(
+                            fillColor: Colors.white,
+                            filled: true,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            hintText: 'Enter your city name',
+                          ),
                         ),
-                        child: const Text('7-Day Forecast'),
-                      ),
+                        const SizedBox(height: 15),
+                        Column(
+                          children: [
+                            ElevatedButton(
+                              onPressed: _fetchWeather,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.blue,
+                                foregroundColor: Colors.white,
+                              ),
+                              child: const Text('Fetch Weather'),
+                            ),
+                            const SizedBox(height: 10),
+                            ElevatedButton(
+                              onPressed: _uploadCustomBackground,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.blueGrey,
+                                foregroundColor: Colors.white,
+                              ),
+                              child: const Text('Upload Background'),
+                            ),
+                            const SizedBox(height: 10),
+                            ElevatedButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        const CommunityInsightsScreen(),
+                                  ),
+                                );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.orange,
+                                foregroundColor: Colors.white,
+                              ),
+                              child: const Text('Community Insights'),
+                            ),
+                            const SizedBox(height: 10),
+                            ElevatedButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const LiveRadarMap(),
+                                  ),
+                                );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.blue,
+                                foregroundColor: Colors.white,
+                              ),
+                              child: const Text('Live Radar Map'),
+                            ),
+                            const SizedBox(height: 10),
+                            ElevatedButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const SatelliteMap(),
+                                  ),
+                                );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.green,
+                                foregroundColor: Colors.white,
+                              ),
+                              child: const Text('Satellite Map'),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 5),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: _uploadCustomBackground,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.black,
-                        foregroundColor: Colors.white,
-                        textStyle: const TextStyle(fontSize: 15),
-                      ),
-                      child: const Text('Upload Custom Background'),
-                    ),
+                  const SizedBox(height: 20),
+                  Text(
+                    _weatherInfo,
+                    style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 20),
-            Text(
-              _weatherInfo,
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// Community Insights Screen
+class CommunityInsightsScreen extends StatefulWidget {
+  const CommunityInsightsScreen({super.key});
+
+  @override
+  _CommunityInsightsScreenState createState() =>
+      _CommunityInsightsScreenState();
+}
+
+class _CommunityInsightsScreenState extends State<CommunityInsightsScreen> {
+  final TextEditingController _reportController = TextEditingController();
+  final List<String> _reports = [];
+  final List<File> _photos = [];
+
+  Future<void> _pickPhoto() async {
+    final pickedFile =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        _photos.add(File(pickedFile.path));
+      });
+    }
+  }
+
+  void _submitReport() {
+    final report = _reportController.text.trim();
+    if (report.isNotEmpty) {
+      setState(() {
+        _reports.add(report);
+        _reportController.clear();
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Community Insights'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Column(
+          children: [
+            const Text(
+              'Share your observations or upload a photo!',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 10),
+            TextField(
+              controller: _reportController,
+              decoration: const InputDecoration(
+                labelText: 'Your weather observation',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: _submitReport,
+                    child: const Text('Submit Report'),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: _pickPhoto,
+                    child: const Text('Upload Photo'),
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 20),
-            _backgroundImage == null
-                ? Container() // Add default background if no custom background is uploaded
-                : Image.file(
-                    _backgroundImage!,
-                    fit: BoxFit.cover,
-                    height: MediaQuery.of(context).size.height,
-                    width: MediaQuery.of(context).size.width,
-                  ),
-            const SizedBox(height: 20),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: _forecastInfo.map((forecast) {
-                  return Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 5.0),
-                    padding: const EdgeInsets.all(8.0),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: Colors.blueGrey.shade100,
+            Expanded(
+              child: ListView(
+                children: [
+                  if (_reports.isNotEmpty)
+                    const Text(
+                      'Community Reports:',
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
-                    child: Column(
-                      children: [
-                        Text(
-                          forecast['day'],
-                          style: const TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(height: 5),
-                        Text('${forecast['temp']}°C'),
-                        const SizedBox(height: 5),
-                        Text(forecast['description']),
-                      ],
+                  ..._reports.map((report) => ListTile(
+                        leading: const Icon(Icons.report),
+                        title: Text(report),
+                      )),
+                  if (_photos.isNotEmpty)
+                    const Text(
+                      'Shared Photos:',
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
-                  );
-                }).toList(),
+                  ..._photos.map((photo) => Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 5),
+                        child: Image.file(photo, height: 200, fit: BoxFit.cover),
+                      )),
+                ],
               ),
             ),
           ],
@@ -311,37 +334,41 @@ class _WeatherScreenState extends State<WeatherScreen> {
   }
 }
 
-class _checkForAlerts {
-  _checkForAlerts(data);
+// Live Radar Map Screen
+class LiveRadarMap extends StatelessWidget {
+  const LiveRadarMap({super.key});
 
-  static Future<void> checkWeatherAlerts(Map<String, dynamic> weatherData) async {
-    final prefs = await SharedPreferences.getInstance();
-    final String lastChecked = prefs.getString('lastChecked') ?? '';
-    final weatherDescription = weatherData['weather'][0]['description'];
-
-    if (lastChecked != weatherDescription) {
-      final androidDetails = AndroidNotificationDetails(
-        'channel_id',
-        'Weather Alerts',
-        channelDescription: 'Weather Notifications',
-        importance: Importance.high,
-        priority: Priority.high,
-      );
-
-      var notificationDetails = NotificationDetails(android: androidDetails);
-
-      await flutterLocalNotificationsPlugin.show(
-        0,
-        'Weather Alert!',
-        'Current Weather: $weatherDescription',
-        notificationDetails,
-      );
-
-      await prefs.setString('lastChecked', weatherDescription);
-    }
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Live Radar Map'),
+      ),
+      body: const Center(
+        child: Text('Live Radar Map feature is under development.'),
+      ),
+    );
   }
 }
 
+// Satellite Map Screen
+class SatelliteMap extends StatelessWidget {
+  const SatelliteMap({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Satellite Map'),
+      ),
+      body: const Center(
+        child: Text('Satellite Map feature is under development.'),
+      ),
+    );
+  }
+}
+
+// Preferences Screen
 class PreferencesScreen extends StatelessWidget {
   const PreferencesScreen({super.key});
 
@@ -349,9 +376,23 @@ class PreferencesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Preferences"),
+        title: const Text('Preferences'),
       ),
-      body: const Center(child: Text('Preferences screen')),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: const [
+            Text(
+              'Preferences Page',
+              style: TextStyle(fontSize: 18),
+            ),
+            Text(
+              'Customize your app preferences here.',
+              style: TextStyle(fontSize: 14),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
