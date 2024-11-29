@@ -46,7 +46,7 @@ class WeatherScreen extends StatefulWidget {
 class _WeatherScreenState extends State<WeatherScreen> {
   final TextEditingController _cityController = TextEditingController();
   String _weatherInfo = "";
-  List<Map<String, dynamic>> _forecastInfo = [];
+  final List<Map<String, dynamic>> _forecastInfo = [];
   final String apiKey = "56a7f11b63575f9939d2ff1f63603240";
   File? _backgroundImage;
 
@@ -378,10 +378,10 @@ class PreferencesScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Preferences'),
       ),
-      body: Center(
+      body: const Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
+          children: [
             Text(
               'Preferences Page',
               style: TextStyle(fontSize: 18),
