@@ -9,10 +9,10 @@ class PreferencesScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Preferences'),
       ),
-      body: Center(
+      body: const Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
+          children: [
             Text(
               'Preferences Page',
               style: TextStyle(fontSize: 18),

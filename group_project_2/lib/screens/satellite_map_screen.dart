@@ -29,10 +29,10 @@ class _SatelliteMapScreenState extends State<SatelliteMapScreen> {
           _mapController = controller;
         },
         markers: {
-          Marker(
-            markerId: const MarkerId('default'),
-            position: const LatLng(37.7749, -122.4194),
-            infoWindow: const InfoWindow(title: 'Default Location'),
+          const Marker(
+            markerId: MarkerId('default'),
+            position: LatLng(37.7749, -122.4194),
+            infoWindow: InfoWindow(title: 'Default Location'),
           ),
         },
       ),
