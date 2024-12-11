@@ -18,11 +18,11 @@ class HomeScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            _buildButton(context, 'Weather Alerts', WeatherAlertsScreen()),
+            _buildButton(context, 'Weather Alerts', const WeatherAlertsScreen()),
             _buildButton(context, 'Detailed Forecast', DetailedForecastScreen()),
-            _buildButton(context, 'Custom Backgrounds', CustomizableBackgroundsScreen()),
-            _buildButton(context, 'Interactive Maps', InteractiveMapsScreen()),
-            _buildButton(context, 'Community Insights', CommunityInsightsScreen()),
+            _buildButton(context, 'Custom Backgrounds', const CustomizableBackgroundsScreen()),
+            _buildButton(context, 'Interactive Maps', const InteractiveMapsScreen()),
+            _buildButton(context, 'Community Insights', const CommunityInsightsScreen()),
           ],
         ),
       ),

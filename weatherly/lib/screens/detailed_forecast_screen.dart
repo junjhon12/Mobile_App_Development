@@ -101,7 +101,7 @@ class DetailedForecastScreen extends StatelessWidget {
                           style: const TextStyle(fontSize: 22),
                         ),
                         const SizedBox(height: 10),
-                        Icon(Icons.wb_sunny, size: 40), // Weather icon (can be changed based on actual forecast)
+                        const Icon(Icons.wb_sunny, size: 40), // Weather icon (can be changed based on actual forecast)
                       ],
                     ),
                   );

@@ -12,7 +12,7 @@ class _InteractiveMapsScreenState extends State<InteractiveMapsScreen> {
   late GoogleMapController mapController;
 
   // Initial camera position (centered at some default location)
-  final CameraPosition _initialPosition = CameraPosition(
+  final CameraPosition _initialPosition = const CameraPosition(
     target: LatLng(37.7749, -122.4194),  // Example: San Francisco
     zoom: 10,
   );
@@ -36,8 +36,7 @@ class _InteractiveMapsScreenState extends State<InteractiveMapsScreen> {
         compassEnabled: true,  // Enable compass
         tiltGesturesEnabled: true,  // Enable tilt gestures
         scrollGesturesEnabled: true,  // Enable scroll gestures
-        markers: Set<Marker>.of(
-          [
+        markers: <Marker>{
             Marker(
               markerId: MarkerId('1'),
               position: LatLng(37.7749, -122.4194),  // Example location
@@ -46,8 +45,7 @@ class _InteractiveMapsScreenState extends State<InteractiveMapsScreen> {
                 snippet: 'Weather data here',
               ),
             ),
-          ],
-        ),
+          },
       ),
     );
   }

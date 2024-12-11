@@ -31,7 +31,7 @@ class CommunityInsightsScreen extends StatelessWidget {
                     margin: const EdgeInsets.symmetric(vertical: 8.0),
                     child: ListTile(
                       title: Text('Report from User #${index + 1}'),
-                      subtitle: Text('Weather Condition: Sunny, Temp: 22°C'),
+                      subtitle: const Text('Weather Condition: Sunny, Temp: 22°C'),
                       trailing: IconButton(
                         icon: const Icon(Icons.location_on),
                         onPressed: () {
