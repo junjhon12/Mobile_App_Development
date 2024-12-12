@@ -11,6 +11,7 @@ class CustomizableBackgroundsScreen extends StatefulWidget {
 
 class _CustomizableBackgroundsScreenState extends State<CustomizableBackgroundsScreen> {
   File? _imageFile;
+  Color? _backgroundColor;
 
   final ImagePicker _picker = ImagePicker();
 
@@ -20,6 +21,7 @@ class _CustomizableBackgroundsScreenState extends State<CustomizableBackgroundsS
     if (pickedFile != null) {
       setState(() {
         _imageFile = File(pickedFile.path);
+        _backgroundColor = null; // Clear the color if an image is selected
       });
     }
   }
@@ -36,44 +38,54 @@ class _CustomizableBackgroundsScreenState extends State<CustomizableBackgroundsS
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Customizable Backgrounds')),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _imageFile == null
-                ? Container(
-                    width: 300,
-                    height: 300,
-                    color: Colors.grey[200],
-                    child: const Center(child: Text('No Image Selected')),
-                  )
-                : Image.file(_imageFile!),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _pickImage,
-              child: const Text('Pick Image from Gallery'),
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: BoxDecoration(
+          color: _backgroundColor ?? Colors.grey[200],
+          image: _imageFile != null
+              ? DecorationImage(
+            image: FileImage(_imageFile!),
+            fit: BoxFit.cover,
+          )
+              : null,
+        ),
+        child: Center(
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  onPressed: _pickImage,
+                  child: const Text('Pick Image from Gallery'),
+                ),
+                const SizedBox(height: 20),
+                const Text('OR Choose a Background Color:'),
+                const SizedBox(height: 10),
+                Wrap(
+                  spacing: 10,
+                  children: _backgrounds.map((color) {
+                    return GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _backgroundColor = color;
+                          _imageFile = null; // Clear the image if a background color is selected
+                        });
+                      },
+                      child: Container(
+                        width: 50,
+                        height: 50,
+                        decoration: BoxDecoration(
+                          color: color,
+                          border: Border.all(color: Colors.black, width: 2),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ],
             ),
-            const SizedBox(height: 20),
-            const Text('OR Choose a Background Color:'),
-            const SizedBox(height: 10),
-            Wrap(
-              spacing: 10,
-              children: _backgrounds.map((color) {
-                return GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      _imageFile = null;  // Clear the image if background color is selected
-                    });
-                  },
-                  child: Container(
-                    width: 50,
-                    height: 50,
-                    color: color,
-                  ),
-                );
-              }).toList(),
-            ),
-          ],
+          ),
         ),
       ),
     );
