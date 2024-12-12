@@ -91,15 +91,20 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildButton(BuildContext context, String title, Widget screen) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 16),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(50), // Square button
+          borderRadius: BorderRadius.circular(12), // Slightly rounded corners
         ),
+        backgroundColor: Colors.blueAccent, // Consistent background color
       ),
       onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => screen)),
-      child: Text(
-        title,
-        style: const TextStyle(fontSize: 16),
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Text(
+          title,
+          textAlign: TextAlign.center,
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+        ),
       ),
     );
   }

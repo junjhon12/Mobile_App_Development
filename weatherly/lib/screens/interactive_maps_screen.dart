@@ -9,17 +9,35 @@ class InteractiveMapsScreen extends StatefulWidget {
 }
 
 class _InteractiveMapsScreenState extends State<InteractiveMapsScreen> {
-  late GoogleMapController mapController;
+  GoogleMapController? mapController;
 
   // Initial camera position (centered at some default location)
   final CameraPosition _initialPosition = const CameraPosition(
-    target: LatLng(37.7749, -122.4194),  // Example: San Francisco
+    target: LatLng(37.7749, -122.4194), // Example: San Francisco
     zoom: 10,
   );
+
+  // Markers list to handle multiple markers dynamically
+  final Set<Marker> _markers = {
+    Marker(
+      markerId: const MarkerId('1'),
+      position: const LatLng(37.7749, -122.4194), // Example location
+      infoWindow: const InfoWindow(
+        title: 'San Francisco',
+        snippet: 'Weather data here',
+      ),
+    ),
+  };
 
   // Function to handle map creation
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
+  }
+
+  @override
+  void dispose() {
+    mapController?.dispose();
+    super.dispose();
   }
 
   @override
@@ -29,23 +47,32 @@ class _InteractiveMapsScreenState extends State<InteractiveMapsScreen> {
       body: GoogleMap(
         onMapCreated: _onMapCreated,
         initialCameraPosition: _initialPosition,
-        mapType: MapType.normal,  // You can change this to satellite or hybrid
-        myLocationEnabled: true,  // Enable user location
-        myLocationButtonEnabled: true,  // Enable the location button
-        zoomControlsEnabled: true,  // Enable zoom controls
-        compassEnabled: true,  // Enable compass
-        tiltGesturesEnabled: true,  // Enable tilt gestures
-        scrollGesturesEnabled: true,  // Enable scroll gestures
-        markers: <Marker>{
-          Marker(
-            markerId: MarkerId('1'),
-            position: LatLng(37.7749, -122.4194),  // Example location
-            infoWindow: InfoWindow(
-              title: 'San Francisco',
-              snippet: 'Weather data here',
-            ),
-          ),
+        mapType: MapType.normal, // Change to satellite or hybrid if needed
+        myLocationEnabled: true, // Enable user location
+        myLocationButtonEnabled: true, // Enable location button
+        zoomControlsEnabled: true, // Enable zoom controls
+        compassEnabled: true, // Enable compass
+        tiltGesturesEnabled: true, // Enable tilt gestures
+        scrollGesturesEnabled: true, // Enable scroll gestures
+        markers: _markers, // Add the markers set
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // Example of adding another marker dynamically
+          setState(() {
+            _markers.add(
+              Marker(
+                markerId: MarkerId('2'),
+                position: const LatLng(37.7849, -122.4094), // Example new location
+                infoWindow: const InfoWindow(
+                  title: 'New Location',
+                  snippet: 'Another marker example',
+                ),
+              ),
+            );
+          });
         },
+        child: const Icon(Icons.add_location_alt),
       ),
     );
   }
