@@ -124,13 +124,13 @@ class CommunityInsightsScreen extends StatelessWidget {
               scrollDirection: Axis.horizontal,
               child: Row(
                 children: List.generate(5, (index) {
-                  // Sample images for demonstration
+                  // Dummy photos for demonstration
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 5.0),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(10),
-                      child: Image.asset(
-                        'assets/sample_photo${index + 1}.jpg', // Replace with dynamic image fetching logic
+                      child: Image.network(
+                        'https://via.placeholder.com/100', // Dummy photo URL
                         width: 100,
                         height: 100,
                         fit: BoxFit.cover,
