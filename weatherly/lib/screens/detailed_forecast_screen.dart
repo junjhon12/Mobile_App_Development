@@ -10,7 +10,7 @@ class DetailedForecastScreen extends StatelessWidget {
     {"time": "02:00 PM", "temp": "30°C", "weather": "Sunny", "icon": "🌞"},
     {"time": "03:00 PM", "temp": "31°C", "weather": "Hot", "icon": "🔥"},
     {"time": "04:00 PM", "temp": "30°C", "weather": "Cloudy", "icon": "☁"},
-    {"time": "05:00 PM", "temp": "28°C", "weather": "Rainy", "icon": "🌧þ"},
+    {"time": "05:00 PM", "temp": "28°C", "weather": "Rainy", "icon": "🌧"},
     {"time": "06:00 PM", "temp": "27°C", "weather": "Clear", "icon": "🌑"},
   ];
 
@@ -81,32 +81,36 @@ class DetailedForecastScreen extends StatelessWidget {
                 shrinkWrap: true, // To prevent the grid from expanding
                 physics: const NeverScrollableScrollPhysics(),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3,
-                  crossAxisSpacing: 8.0,
-                  mainAxisSpacing: 8.0,
+                  crossAxisCount: 2, // Two columns for better space allocation
+                  crossAxisSpacing: 16.0,
+                  mainAxisSpacing: 16.0,
+                  childAspectRatio: 1.0, // Ensures square-like cards
                 ),
                 itemCount: 7,
                 itemBuilder: (context, index) {
                   return Card(
                     elevation: 4,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Day ${index + 1}',
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Day ${index + 1}',
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 10),
-                        Text(
-                          '${(25 + index)}°C', // Randomized for the demo
-                          style: const TextStyle(fontSize: 22),
-                        ),
-                        const SizedBox(height: 10),
-                        const Icon(Icons.wb_sunny, size: 40), // Weather icon
-                      ],
+                          const SizedBox(height: 10),
+                          Text(
+                            '${(25 + index)}°C', // Randomized for the demo
+                            style: const TextStyle(fontSize: 22),
+                          ),
+                          const SizedBox(height: 10),
+                          const Icon(Icons.wb_sunny, size: 40), // Weather icon
+                        ],
+                      ),
                     ),
                   );
                 },
