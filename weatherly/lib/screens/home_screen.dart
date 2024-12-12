@@ -56,13 +56,24 @@ class _HomeScreenState extends State<HomeScreen> {
         child: _loading
             ? const CircularProgressIndicator()
             : Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Text(
+                _currentWeather,
+                style: const TextStyle(fontSize: 20),
+                textAlign: TextAlign.center,
+              ),
+            ),
+            Expanded(
+              child: GridView.count(
+                crossAxisCount: 2, // Split into two sides
+                mainAxisSpacing: 10,
+                crossAxisSpacing: 10,
+                padding: const EdgeInsets.all(16.0),
                 children: [
-                  Text(
-                    _currentWeather,
-                    style: const TextStyle(fontSize: 20),
-                  ),
-                  const SizedBox(height: 20),
                   _buildButton(context, 'Weather Alerts', const WeatherAlertsScreen()),
                   _buildButton(context, 'Detailed Forecast', DetailedForecastScreen()),
                   _buildButton(context, 'Custom Backgrounds', const CustomizableBackgroundsScreen()),
@@ -70,16 +81,25 @@ class _HomeScreenState extends State<HomeScreen> {
                   _buildButton(context, 'Community Insights', const CommunityInsightsScreen()),
                 ],
               ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildButton(BuildContext context, String title, Widget screen) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: ElevatedButton(
-        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => screen)),
-        child: Text(title),
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        padding: const EdgeInsets.all(16.0),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(50), // Square button
+        ),
+      ),
+      onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => screen)),
+      child: Text(
+        title,
+        style: const TextStyle(fontSize: 16),
       ),
     );
   }
