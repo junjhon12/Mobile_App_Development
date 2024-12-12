@@ -30,7 +30,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
         final data = jsonDecode(response.body);
         setState(() {
           _weatherData =
-              'City: ${data['name']}\nTemperature: ${data['main']['temp']}°C\nCondition: ${data['weather'][0]['description']}';
+          'City: ${data['name']}\nTemperature: ${data['main']['temp']}°C\nCondition: ${data['weather'][0]['description']}';
         });
       } else {
         setState(() {

@@ -37,15 +37,15 @@ class _InteractiveMapsScreenState extends State<InteractiveMapsScreen> {
         tiltGesturesEnabled: true,  // Enable tilt gestures
         scrollGesturesEnabled: true,  // Enable scroll gestures
         markers: <Marker>{
-            Marker(
-              markerId: MarkerId('1'),
-              position: LatLng(37.7749, -122.4194),  // Example location
-              infoWindow: InfoWindow(
-                title: 'San Francisco',
-                snippet: 'Weather data here',
-              ),
+          Marker(
+            markerId: MarkerId('1'),
+            position: LatLng(37.7749, -122.4194),  // Example location
+            infoWindow: InfoWindow(
+              title: 'San Francisco',
+              snippet: 'Weather data here',
             ),
-          },
+          ),
+        },
       ),
     );
   }

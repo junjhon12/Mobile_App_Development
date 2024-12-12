@@ -25,7 +25,7 @@ class _WeatherAlertsScreenState extends State<WeatherAlertsScreen> {
       try {
         final weatherData = await WeatherService.fetchWeather(cityName);
         setState(() {
-          _weatherInfo = 'Weather in $cityName: ${weatherData['main']['temp']}°C, ${weatherData['weather'][0]['description']}';
+          _weatherInfo = 'Weather in $cityName: ${weatherData['main']['temp']}\u00b0C, ${weatherData['weather'][0]['description']}';
         });
       } catch (e) {
         setState(() {
@@ -62,7 +62,7 @@ class _WeatherAlertsScreenState extends State<WeatherAlertsScreen> {
       final weatherData = await WeatherService.fetchWeatherByCoordinates(position.latitude, position.longitude);
 
       setState(() {
-        _weatherInfo = 'Weather at your location: ${weatherData['main']['temp']}°C, ${weatherData['weather'][0]['description']}';
+        _weatherInfo = 'Weather at your location: ${weatherData['main']['temp']}\u00b0C, ${weatherData['weather'][0]['description']}';
       });
     } catch (e) {
       setState(() {
@@ -124,7 +124,7 @@ class _WeatherAlertsScreenState extends State<WeatherAlertsScreen> {
             const SizedBox(height: 16),
 
             // Weather Info Display
-            if (_loading) 
+            if (_loading)
               const CircularProgressIndicator(), // Show a loading spinner while fetching data
             if (_weatherInfo != null && !_loading)
               Text(

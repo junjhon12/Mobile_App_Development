@@ -8,12 +8,16 @@ class WeatherService {
   // Fetch weather by city name
   static Future<Map<String, dynamic>> fetchWeather(String cityName) async {
     final url = Uri.parse('$_baseUrl?q=$cityName&appid=$_apiKey&units=metric');
-    
-    final response = await http.get(url);
-    if (response.statusCode == 200) {
-      return json.decode(response.body);
-    } else {
-      throw Exception('Failed to load weather');
+
+    try {
+      final response = await http.get(url);
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      } else {
+        throw Exception('Failed to load weather: ${response.reasonPhrase}');
+      }
+    } catch (e) {
+      throw Exception('Error occurred while fetching weather: $e');
     }
   }
 
@@ -21,11 +25,15 @@ class WeatherService {
   static Future<Map<String, dynamic>> fetchWeatherByCoordinates(double lat, double lon) async {
     final url = Uri.parse('$_baseUrl?lat=$lat&lon=$lon&appid=$_apiKey&units=metric');
 
-    final response = await http.get(url);
-    if (response.statusCode == 200) {
-      return json.decode(response.body);
-    } else {
-      throw Exception('Failed to load weather');
+    try {
+      final response = await http.get(url);
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      } else {
+        throw Exception('Failed to load weather: ${response.reasonPhrase}');
+      }
+    } catch (e) {
+      throw Exception('Error occurred while fetching weather by coordinates: $e');
     }
   }
 }
