@@ -16,7 +16,7 @@ class CommunityInsightsScreen extends StatelessWidget {
             const Text(
               'Community Weather Reports',
               style: TextStyle(
-                fontSize: 20,
+                fontSize: 22,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -29,11 +29,19 @@ class CommunityInsightsScreen extends StatelessWidget {
                 itemBuilder: (context, index) {
                   return Card(
                     margin: const EdgeInsets.symmetric(vertical: 8.0),
+                    elevation: 3,
                     child: ListTile(
+                      leading: CircleAvatar(
+                        backgroundColor: Colors.blue.shade100,
+                        child: Text(
+                          '#${index + 1}',
+                          style: const TextStyle(fontSize: 12),
+                        ),
+                      ),
                       title: Text('Report from User #${index + 1}'),
                       subtitle: const Text('Weather Condition: Sunny, Temp: 22°C'),
                       trailing: IconButton(
-                        icon: const Icon(Icons.location_on),
+                        icon: const Icon(Icons.location_on, color: Colors.redAccent),
                         onPressed: () {
                           // Show detailed report or map location if needed
                           showDialog(
@@ -41,7 +49,7 @@ class CommunityInsightsScreen extends StatelessWidget {
                             builder: (context) {
                               return AlertDialog(
                                 title: const Text('Report Details'),
-                                content: Text('Detailed report for day ${index + 1}'),
+                                content: Text('Detailed report for day ${index + 1}.'),
                                 actions: [
                                   TextButton(
                                     onPressed: () {
@@ -61,8 +69,9 @@ class CommunityInsightsScreen extends StatelessWidget {
               ),
             ),
 
+            const SizedBox(height: 16),
+
             // Button to upload photos
-            const SizedBox(height: 10),
             ElevatedButton.icon(
               onPressed: () {
                 // You can handle photo upload functionality here
@@ -98,14 +107,13 @@ class CommunityInsightsScreen extends StatelessWidget {
               ),
             ),
 
-            // Spacer
             const SizedBox(height: 20),
 
-            // Section to view community-shared photos (could be loaded dynamically)
+            // Section to view community-shared photos
             const Text(
               'Community Shared Photos:',
               style: TextStyle(
-                fontSize: 18,
+                fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
             ),

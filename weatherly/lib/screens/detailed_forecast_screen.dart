@@ -9,9 +9,9 @@ class DetailedForecastScreen extends StatelessWidget {
     {"time": "01:00 PM", "temp": "29°C", "weather": "Partly Cloudy", "icon": "⛅"},
     {"time": "02:00 PM", "temp": "30°C", "weather": "Sunny", "icon": "🌞"},
     {"time": "03:00 PM", "temp": "31°C", "weather": "Hot", "icon": "🔥"},
-    {"time": "04:00 PM", "temp": "30°C", "weather": "Cloudy", "icon": "☁️"},
-    {"time": "05:00 PM", "temp": "28°C", "weather": "Rainy", "icon": "🌧️"},
-    {"time": "06:00 PM", "temp": "27°C", "weather": "Clear", "icon": "🌙"},
+    {"time": "04:00 PM", "temp": "30°C", "weather": "Cloudy", "icon": "☁"},
+    {"time": "05:00 PM", "temp": "28°C", "weather": "Rainy", "icon": "🌧þ"},
+    {"time": "06:00 PM", "temp": "27°C", "weather": "Clear", "icon": "🌑"},
   ];
 
   @override
@@ -37,16 +37,18 @@ class DetailedForecastScreen extends StatelessWidget {
               // Display hourly forecast data in a list
               ListView.builder(
                 shrinkWrap: true, // To prevent the list from expanding
+                physics: const NeverScrollableScrollPhysics(),
                 itemCount: hourlyForecast.length,
                 itemBuilder: (context, index) {
                   final forecast = hourlyForecast[index];
 
                   return Card(
                     margin: const EdgeInsets.symmetric(vertical: 8),
+                    elevation: 3,
                     child: ListTile(
                       contentPadding: const EdgeInsets.all(10),
                       leading: Text(
-                        forecast["icon"]!, // Weather icon (can be more complex)
+                        forecast["icon"]!, // Weather icon
                         style: const TextStyle(fontSize: 30),
                       ),
                       title: Text(
@@ -77,6 +79,7 @@ class DetailedForecastScreen extends StatelessWidget {
               // Sample 7-day forecast
               GridView.builder(
                 shrinkWrap: true, // To prevent the grid from expanding
+                physics: const NeverScrollableScrollPhysics(),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 3,
                   crossAxisSpacing: 8.0,
@@ -87,6 +90,7 @@ class DetailedForecastScreen extends StatelessWidget {
                   return Card(
                     elevation: 4,
                     child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
                           'Day ${index + 1}',
@@ -101,7 +105,7 @@ class DetailedForecastScreen extends StatelessWidget {
                           style: const TextStyle(fontSize: 22),
                         ),
                         const SizedBox(height: 10),
-                        const Icon(Icons.wb_sunny, size: 40), // Weather icon (can be changed based on actual forecast)
+                        const Icon(Icons.wb_sunny, size: 40), // Weather icon
                       ],
                     ),
                   );

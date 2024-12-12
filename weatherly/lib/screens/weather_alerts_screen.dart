@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../services/weather_service.dart'; // Import your WeatherService class
+import '../services/weather_service.dart';
 import 'package:geolocator/geolocator.dart';
-import 'detailed_forecast_screen.dart';  // Import DetailedForecastScreen
+import 'detailed_forecast_screen.dart';
 
 class WeatherAlertsScreen extends StatefulWidget {
   const WeatherAlertsScreen({super.key});
@@ -25,7 +25,7 @@ class _WeatherAlertsScreenState extends State<WeatherAlertsScreen> {
       try {
         final weatherData = await WeatherService.fetchWeather(cityName);
         setState(() {
-          _weatherInfo = 'Weather in $cityName: ${weatherData['main']['temp']}°C';
+          _weatherInfo = 'Weather in $cityName: ${weatherData['main']['temp']}°C, ${weatherData['weather'][0]['description']}';
         });
       } catch (e) {
         setState(() {
@@ -62,7 +62,7 @@ class _WeatherAlertsScreenState extends State<WeatherAlertsScreen> {
       final weatherData = await WeatherService.fetchWeatherByCoordinates(position.latitude, position.longitude);
 
       setState(() {
-        _weatherInfo = 'Weather at your location: ${weatherData['main']['temp']}°C';
+        _weatherInfo = 'Weather at your location: ${weatherData['main']['temp']}°C, ${weatherData['weather'][0]['description']}';
       });
     } catch (e) {
       setState(() {
