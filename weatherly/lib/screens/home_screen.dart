@@ -39,7 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
       final now = DateTime.now();
       final weekday = _getDayOfWeek(now.weekday);
-      final date = '${now.day}/${now.month}/${now.year}';
+      final date = '${now.month}/${now.day}/${now.year}';
       final weatherDescription = weatherData['weather'][0]['description'];
       final temperature = '${weatherData['main']['temp']}°C';
       final iconCode = weatherData['weather'][0]['icon'];
