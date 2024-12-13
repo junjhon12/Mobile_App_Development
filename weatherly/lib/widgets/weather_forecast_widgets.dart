@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
 class WeatherHourlyForecast extends StatelessWidget {
+  const WeatherHourlyForecast({super.key});
+
   @override
   Widget build(BuildContext context) {
     // Placeholder for hourly data
-    return Card(
+    return const Card(
       child: Column(
         children: [
           Text('Hourly Forecast', style: TextStyle(fontSize: 18)),
@@ -17,10 +19,12 @@ class WeatherHourlyForecast extends StatelessWidget {
 }
 
 class WeatherWeeklyForecast extends StatelessWidget {
+  const WeatherWeeklyForecast({super.key});
+
   @override
   Widget build(BuildContext context) {
     // Placeholder for weekly data
-    return Card(
+    return const Card(
       child: Column(
         children: [
           Text('7-Day Forecast', style: TextStyle(fontSize: 18)),

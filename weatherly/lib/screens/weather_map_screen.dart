@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class WeatherMapScreen extends StatefulWidget {
+  const WeatherMapScreen({super.key});
+
   @override
   _WeatherMapScreenState createState() => _WeatherMapScreenState();
 }
@@ -18,7 +20,7 @@ class _WeatherMapScreenState extends State<WeatherMapScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Weather Map')),
+      appBar: AppBar(title: const Text('Weather Map')),
       body: GoogleMap(
         onMapCreated: _onMapCreated,
         initialCameraPosition: CameraPosition(
