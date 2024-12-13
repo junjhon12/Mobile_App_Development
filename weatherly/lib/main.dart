@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-<<<<<<< HEAD
 import 'package:geolocator/geolocator.dart';
 import 'package:weatherly/screens/home_screen.dart';
 import './services/weather_service.dart';  // Make sure to import your service here.

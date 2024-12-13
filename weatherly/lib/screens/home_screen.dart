@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-<<<<<<< HEAD
 import 'weather_alerts_screen.dart';
 import 'detailed_forecast_screen.dart';
 import 'customizable_backgrounds_screen.dart';
 import 'interactive_maps_screen.dart';
 import 'community_insights_screen.dart';
 import 'package:geolocator/geolocator.dart';
-import '../services/weather_service.dart'; // Import your WeatherService class
+import '../services/weather_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -20,7 +19,7 @@ class _HomeScreenState extends State<HomeScreen> {
   String _currentDay = '';
   String _currentDate = '';
   String _currentTemperature = '';
-  String _weatherIconUrl = ''; // To display weather icon
+  String _weatherIconUrl = '';
   bool _loading = true;
 
   Future<void> _fetchWeather() async {
@@ -29,15 +28,21 @@ class _HomeScreenState extends State<HomeScreen> {
     });
 
     try {
-      Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-      final weatherData = await WeatherService.fetchWeatherByCoordinates(position.latitude, position.longitude);
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+
+      final weatherData = await WeatherService.fetchWeatherByCoordinates(
+        position.latitude,
+        position.longitude,
+      );
 
       final now = DateTime.now();
       final weekday = _getDayOfWeek(now.weekday);
       final date = '${now.day}/${now.month}/${now.year}';
       final weatherDescription = weatherData['weather'][0]['description'];
       final temperature = '${weatherData['main']['temp']}°C';
-      final iconCode = weatherData['weather'][0]['icon']; // Weather icon code
+      final iconCode = weatherData['weather'][0]['icon'];
       final iconUrl = 'https://openweathermap.org/img/wn/$iconCode@2x.png';
 
       setState(() {
@@ -50,9 +55,7 @@ class _HomeScreenState extends State<HomeScreen> {
       });
     } catch (e) {
       setState(() {
-        _currentDay = 'N/A';
-        _currentDate = 'N/A';
-        _currentWeather = 'Failed to fetch weather.';
+        _currentWeather = 'Failed to fetch weather';
         _currentTemperature = 'N/A';
         _weatherIconUrl = '';
         _loading = false;
@@ -79,85 +82,77 @@ class _HomeScreenState extends State<HomeScreen> {
     _fetchWeather();
   }
 
-=======
-import '../widgets/weather_current_widget.dart';
-import '../widgets/weather_forecast_widgets.dart';
-
-class HomeScreen extends StatelessWidget {
->>>>>>> main
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-<<<<<<< HEAD
-        title: const Center(child: Text('Weatherly Dashboard')),
+        title: const Text('Weatherly Dashboard'),
+        centerTitle: true,
       ),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Container(
-            color: Colors.grey[300],
-            padding: const EdgeInsets.all(15.0),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                if (_weatherIconUrl.isNotEmpty)
-                  Image.network(
-                    _weatherIconUrl,
-                    width: 75,
-                    height: 75,
-                    fit: BoxFit.contain,
+                Container(
+                  color: Colors.grey[300],
+                  padding: const EdgeInsets.all(15.0),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      if (_weatherIconUrl.isNotEmpty)
+                        Image.network(
+                          _weatherIconUrl,
+                          width: 75,
+                          height: 75,
+                          fit: BoxFit.contain,
+                        ),
+                      const SizedBox(width: 10),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Date: $_currentDate',
+                            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            'Day: $_currentDay',
+                            style: const TextStyle(fontSize: 18),
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            'Weather: $_currentWeather',
+                            style: const TextStyle(fontSize: 18),
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            'Temperature: $_currentTemperature',
+                            style: const TextStyle(fontSize: 18),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
-                const SizedBox(width: 10),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Date: $_currentDate',
-                      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                Expanded(
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        buildButton(context, 'Weather Alerts', const WeatherAlertsScreen()),
+                        buildButton(context, 'Detailed Forecast', DetailedForecastScreen()),
+                        buildButton(context, 'Custom Backgrounds', const CustomizableBackgroundsScreen()),
+                        buildButton(context, 'Interactive Maps', const InteractiveMapsScreen()),
+                        buildButton(context, 'Community Insights', const CommunityInsightsScreen()),
+                      ],
                     ),
-                    const SizedBox(height: 30),
-                    Text(
-                      'Current Week Day: $_currentDay',
-                      style: const TextStyle(fontSize: 20),
-                    ),
-                    const SizedBox(height: 30),
-                    Text(
-                      'Weather Status: $_currentWeather',
-                      style: const TextStyle(fontSize: 20),
-                    ),
-                    const SizedBox(height: 30),
-                    Text(
-                      'Current Location Temp: $_currentTemperature',
-                      style: const TextStyle(fontSize: 20),
-                    ),
-                  ],
+                  ),
                 ),
               ],
             ),
-          ),
-          Expanded(
-            child: Center(
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    buildButton(context, 'Weather Alerts', const WeatherAlertsScreen()),
-                    buildButton(context, 'Detailed Forecast', DetailedForecastScreen()),
-                    buildButton(context, 'Custom Backgrounds', const CustomizableBackgroundsScreen()),
-                    buildButton(context, 'Interactive Maps', const InteractiveMapsScreen()),
-                    buildButton(context, 'Community Insights', const CommunityInsightsScreen()),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
     );
   }
 
@@ -166,39 +161,23 @@ class HomeScreen extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 10.0),
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          padding: const EdgeInsets.symmetric(horizontal: 25.0, vertical: 100.0),
+          padding: const EdgeInsets.symmetric(horizontal: 25.0, vertical: 50.0),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
           backgroundColor: Colors.blueAccent,
         ),
-        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => screen)),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            WeatherCurrentWidget(),
-            WeatherHourlyForecast(),
-            WeatherWeeklyForecast(),
-          ],
->>>>>>> main
-        ),
-      ),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => screen),
+          );
+        },
         child: Text(
           title,
           textAlign: TextAlign.center,
           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
-=======
-        title: Text('Weatherly'),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.map),
-            onPressed: () => Navigator.pushNamed(context, '/map'),
-          ),
-          IconButton(
-            icon: Icon(Icons.settings),
-            onPressed: () => Navigator.pushNamed(context, '/settings'),
-          ),
-        ],
+        ),
       ),
     );
   }
