@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+<<<<<<< HEAD
 import 'weather_alerts_screen.dart';
 import 'detailed_forecast_screen.dart';
 import 'customizable_backgrounds_screen.dart';
@@ -78,10 +79,17 @@ class _HomeScreenState extends State<HomeScreen> {
     _fetchWeather();
   }
 
+=======
+import '../widgets/weather_current_widget.dart';
+import '../widgets/weather_forecast_widgets.dart';
+
+class HomeScreen extends StatelessWidget {
+>>>>>>> main
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+<<<<<<< HEAD
         title: const Center(child: Text('Weatherly Dashboard')),
       ),
       body: _loading
@@ -138,11 +146,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    _buildButton(context, 'Weather Alerts', const WeatherAlertsScreen()),
-                    _buildButton(context, 'Detailed Forecast', DetailedForecastScreen()),
-                    _buildButton(context, 'Custom Backgrounds', const CustomizableBackgroundsScreen()),
-                    _buildButton(context, 'Interactive Maps', const InteractiveMapsScreen()),
-                    _buildButton(context, 'Community Insights', const CommunityInsightsScreen()),
+                    buildButton(context, 'Weather Alerts', const WeatherAlertsScreen()),
+                    buildButton(context, 'Detailed Forecast', DetailedForecastScreen()),
+                    buildButton(context, 'Custom Backgrounds', const CustomizableBackgroundsScreen()),
+                    buildButton(context, 'Interactive Maps', const InteractiveMapsScreen()),
+                    buildButton(context, 'Community Insights', const CommunityInsightsScreen()),
                   ],
                 ),
               ),
@@ -153,7 +161,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildButton(BuildContext context, String title, Widget screen) {
+  Widget buildButton(BuildContext context, String title, Widget screen) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 10.0),
       child: ElevatedButton(
@@ -165,11 +173,32 @@ class _HomeScreenState extends State<HomeScreen> {
           backgroundColor: Colors.blueAccent,
         ),
         onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => screen)),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            WeatherCurrentWidget(),
+            WeatherHourlyForecast(),
+            WeatherWeeklyForecast(),
+          ],
+>>>>>>> main
+        ),
+      ),
         child: Text(
           title,
           textAlign: TextAlign.center,
           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
-        ),
+=======
+        title: Text('Weatherly'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.map),
+            onPressed: () => Navigator.pushNamed(context, '/map'),
+          ),
+          IconButton(
+            icon: Icon(Icons.settings),
+            onPressed: () => Navigator.pushNamed(context, '/settings'),
+          ),
+        ],
       ),
     );
   }

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class WeatherService {
+<<<<<<< HEAD
   static const String _apiKey = '56a7f11b63575f9939d2ff1f63603240'; // Your API key
   static const String _baseUrl = 'https://api.openweathermap.org/data/2.5/weather';
 
@@ -34,6 +35,19 @@ class WeatherService {
       }
     } catch (e) {
       throw Exception('Error occurred while fetching weather by coordinates: $e');
+=======
+  static const String apiKey = '56a7f11b63575f9939d2ff1f63603240';
+  const String baseUrl = 'https://api.openweathermap.org/data/2.5';
+
+  Future<Map<String, dynamic>> getWeatherByLocation(double lat, double lon) async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/weather?lat=$lat&lon=$lon&appid=$apiKey&units=metric'),
+    );
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('Failed to load weather data');
+>>>>>>> main
     }
   }
 }
