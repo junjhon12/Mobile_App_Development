@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+<<<<<<< HEAD
 import 'weather_alerts_screen.dart';
 import 'detailed_forecast_screen.dart';
 import 'customizable_backgrounds_screen.dart';
@@ -78,6 +79,12 @@ class _HomeScreenState extends State<HomeScreen> {
     _fetchWeather();
   }
 
+=======
+import '../widgets/weather_current_widget.dart';
+import '../widgets/weather_forecast_widgets.dart';
+
+class HomeScreen extends StatelessWidget {
+>>>>>>> main
   @override
   Widget build(BuildContext context) {
     return Scaffold(
